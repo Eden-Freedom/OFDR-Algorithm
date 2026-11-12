@@ -232,3 +232,10 @@ $$R(z_k)=\sum_n w_n s_n\exp\!\left[-i2\pi\frac{2n_gz_k}{c}(\nu_n-\nu_{\rm ref})\
 2. Z. Ding et al., “Note: Improving spatial resolution of optical frequency-domain reflectometry against frequency tuning nonlinearity using non-uniform fast Fourier transform,” *Review of Scientific Instruments*, 83, 066110 (2012), DOI [10.1063/1.4729376](https://doi.org/10.1063/1.4729376)。辅助 MZI 见式 (1)–(2)；非均匀重构、网格化与补偿见式 (3)–(5) 和图 2。
 
 本文档中的扫频曲线、散射点与噪声模型是为可控仿真设计的，不意味着对原始论文实验数据或仪器硬件的原样复现。
+
+
+---
+
+## 10. V4 实施记录（2026-11-11）
+
+V4 代码位于 `matlab/v4/`，实验指导位于 `docs/V4_EXPERIMENT_GUIDE.md`。将 V2 的 `calibration.sswt.nu_offset_Hz` 转成标称带宽归一化坐标后直接送入 V3 的 Type-1 NUFFT；同时比较未校准 FFT、真值坐标 NUFFT、真值/SSWT 插值 FFT。针对孤立反射点增加功率半高宽与 90% 能量累计宽度，以区分未校准谱的宽纹波与真实主瓣。已添加 `smoke_test_v4`、可选 `run_snr_sweep_v4`，等待使用者 MATLAB 本地运行验证。

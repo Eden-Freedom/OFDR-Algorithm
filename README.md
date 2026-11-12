@@ -10,10 +10,33 @@
 |---|---|---|
 | V1 | TLS 非线性扫频、辅助 MZI 和主 OFDR 离散反射信号生成 | 已由使用者本地运行并确认三幅图正常 |
 | V2 | 自行实现 CWT、SSWT、脊线提取和光频恢复 | 源码已提交；使用者已在 MATLAB 本地生成三组图，量化指标仍可继续评估 |
-| V3 | 直接 NUDFT 与 Gaussian Gridding NUFFT | 源码已完成；等待本地 MATLAB 运行验证 |
-| V4 | SSWT + NUFFT 联合性能对照 | 规划中 |
+| V3 | 直接 NUDFT 与 Gaussian Gridding NUFFT | 用户 MATLAB 运行已验证（相对 NUDFT 误差约 1.03e-5） |
+| V4 | SSWT + NUFFT 联合性能对照 | 源码已提供，待用户 MATLAB 本地运行验证 |
 
-完整设计方案见 [docs/SIMULATION_PLAN.md](docs/SIMULATION_PLAN.md)；V1 请读 [V1 实验指南](docs/V1_EXPERIMENT_GUIDE.md)，V2 请读 [V2 实验指南](docs/V2_EXPERIMENT_GUIDE.md)，V3 请读 [V3 实验指南](docs/V3_EXPERIMENT_GUIDE.md)。
+完整设计方案见 [docs/SIMULATION_PLAN.md](docs/SIMULATION_PLAN.md)；V1 请读 [V1 实验指南](docs/V1_EXPERIMENT_GUIDE.md)，V2 请读 [V2 实验指南](docs/V2_EXPERIMENT_GUIDE.md)，V3 请读 [V3 实验指南](docs/V3_EXPERIMENT_GUIDE.md)，V4 请读 [V4 实验指南](docs/V4_EXPERIMENT_GUIDE.md)。
+
+## V4 运行方法：SSWT 校准接入 NUFFT（最新阶段）
+
+V4 使用 V2 从辅助 MZI 恢复的**估计光频轨迹**作为 V3 NUFFT 的非均匀坐标，使用 V1 的同一份主 OFDR 信号重构。与真实坐标 NUFFT、无校准 FFT、真值/SSWT 坐标插值 FFT 进行对照。
+
+```matlab
+addpath('matlab/v4');
+smoke_test_v4;  % 基础物理和端到端回归检查
+[cfg,truth,signals,results,metrics] = main_v4();
+```
+
+V4 产生 Figure 11（联合反射谱、双峰及孤立反射）、Figure 12（光频误差传播）、Figure 13（定量指标）。另可选择 `run_snr_sweep_v4();` 执行多 SNR 实验并产生 Figure 14。
+
+```matlab
+cfg=config_v4();
+cfg.v4.include_stft_cwt=false; % 可选：避免 CWT/STFT 末端越界后的跳过警告
+cfg.v3.kernel_width=12;
+main_v4(cfg);
+```
+
+**重要：** V4 以仪器设置中的标称起止波长定义距离刻度，不能用真实 TLS 光频轨迹修正 SSWT 估计后再声称联合校准精度；若估计采样坐标超出 `[0,1)`，会明确报错而不是静默裁剪。
+
+完整说明：[V4 实验指南](docs/V4_EXPERIMENT_GUIDE.md)。V4 尚未经过 MATLAB 实机运行验证，运行结果由用户本地检查。
 
 ## V3 运行方法：已知真实光频坐标下的 NUFFT 重构
 
@@ -39,7 +62,7 @@ cfg.v3.show_benchmark=false;   % 可跳过小规模耗时评估
 main_v3(cfg);
 ```
 
-**重要：** V3 NUFFT 的密度补偿属于可选的光频积分近似，对照 NUDFT 的采样权重必须完全一致。V3 的数值误差不等同于理论空间分辨率；将 SSWT 光频轨迹接到 NUFFT 是 V4。
+**重要：** V3 NUFFT 的密度补偿属于可选的光频积分近似，对照 NUDFT 的采样权重必须完全一致。V3 的数值误差不等同于理论空间分辨率；将 SSWT 光频轨迹接到 NUFFT 已在 V4 实现。
 
 更多解释见 [V3_EXPERIMENT_GUIDE.md](docs/V3_EXPERIMENT_GUIDE.md)。V3 代码已进行独立数值公式核验，但未在本环境中直接执行 MATLAB，需用户本地运行并反馈。
 

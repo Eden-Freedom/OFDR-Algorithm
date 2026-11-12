@@ -1,0 +1,9 @@
+# MATLAB auto-save, editor and output files
+*.asv
+*.m~
+*.autosave
+*.fig
+*.mat
+matlab/v1/output/
+**/.DS_Store
+Thumbs.db

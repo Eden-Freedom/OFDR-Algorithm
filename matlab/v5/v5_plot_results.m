@@ -66,8 +66,10 @@ function v5_plot_results(results,cfg)
     end
     figure('Name','V5 Figure F | spatial tolerance map','Color','w');
     mapped=abs(B.incremental_error_m)*1e3;
-    imagesc(B.scale_ppm,B.distances_m,mapped);axis xy;colorbar;
-    xlabel('Injected scale error (ppm)');ylabel('Reflector distance (m)');
+    imagesc(1:numel(B.scale_ppm),B.distances_m,mapped);axis xy;colorbar;
+    set(gca,'XTick',1:numel(B.scale_ppm), ...
+        'XTickLabel',arrayfun(@num2str,B.scale_ppm(:).','UniformOutput',false));
+    xlabel('Injected scale error (ppm; categorical spacing)');ylabel('Reflector distance (m)');
     title('Incremental peak shift (mm); invalid cases shown blank');
     if isfield(results,'D_snr')
         Dsnr=results.D_snr;

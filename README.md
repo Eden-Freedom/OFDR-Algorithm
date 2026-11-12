@@ -2,18 +2,43 @@
 
 用于学习 **OFDR（Optical Frequency Domain Reflectometry，光频域反射仪）** 信号生成、SSWT 扫频校准以及 NUFFT 非均匀采样重构的 MATLAB 仿真项目。
 
-> 仓库名称沿用 `OFRD-Algorithm`；光频域反射仪的正确缩写是 **OFDR**。
+> 正确缩写为 **OFDR**。仓库已统一为 `OFDR-Algorithm`。
 
 ## 开发进度
 
 | 版本 | 内容 | 状态 |
 |---|---|---|
-| V1 | TLS 非线性扫频、辅助 MZI 和主 OFDR 离散反射信号生成 | 源码已准备，等待 MATLAB 本地执行验收 |
-| V2 | 自行实现 CWT、SSWT、脊线提取和光频恢复 | 规划中 |
+| V1 | TLS 非线性扫频、辅助 MZI 和主 OFDR 离散反射信号生成 | 已由使用者本地运行并确认三幅图正常 |
+| V2 | 自行实现 CWT、SSWT、脊线提取和光频恢复 | 源码已提交；等待使用者 MATLAB 本地验证 |
 | V3 | 直接 NUDFT 与 Gaussian Gridding NUFFT | 规划中 |
 | V4 | SSWT + NUFFT 联合性能对照 | 规划中 |
 
-完整设计方案见 [docs/SIMULATION_PLAN.md](docs/SIMULATION_PLAN.md)；首次运行建议参照 [docs/V1_EXPERIMENT_GUIDE.md](docs/V1_EXPERIMENT_GUIDE.md)。
+完整设计方案见 [docs/SIMULATION_PLAN.md](docs/SIMULATION_PLAN.md)；V1 请读 [V1 实验指南](docs/V1_EXPERIMENT_GUIDE.md)，V2 请读 [V2 实验指南](docs/V2_EXPERIMENT_GUIDE.md)。
+
+## V2 运行方法：SSWT 扫频轨迹校准
+
+V2 沿用 V1 的辅助 MZI 信号，并且新增**从原理编写的复 Morlet CWT、SSWT 重分配、脊线精细化、光频与波长恢复**。提供自行编写的 STFT 和 CWT 作为对照；V2 **尚不包括 NUFFT**。
+
+在仓库根目录运行（不需要 `cwt` / `wsst` / `spectrogram` 工具箱函数）：
+
+```matlab
+addpath('matlab/v2');
+smoke_test_v2;  % 优先运行：无噪声纯音与 V1 模型回归测试
+[cfg,truth,signals,results,metrics] = main_v2();
+```
+
+V2 生成图 4（STFT / CWT / SSWT 时频图）、图 5（拍频残差）、图 6（光频和波长恢复误差），打印各方法的拍频 RMSE、光频 RMSE、波长 RMSE (fm) 和耗时。第一版频率范围为 25–80 kHz、24 scales/octave、SSWT 频率网格 100 Hz。若研究更密的尺度，可执行：
+
+```matlab
+cfg=config_v2();
+cfg.sswt.voices_per_octave=36;
+cfg.aux.snr_dB=15;
+main_v2(cfg);
+```
+
+细节、参数扫描和限制见 [V2_EXPERIMENT_GUIDE.md](docs/V2_EXPERIMENT_GUIDE.md)。拍频 RMSE 忽略前后各 5% 采样点以减小变换边界影响；波长 RMSE 是全扫频计算，以保留积分累积误差。**波长 fm 误差不等于 OFDR 空间分辨率。**
+
+**运行状态说明**：V2 算法已进行独立数值公式交叉检查，但不能代替真实 MATLAB 运行验证。请在本地先执行 `smoke_test_v2`，发现版本兼容问题可直接反馈报错行。
 
 ## V1 运行方法
 

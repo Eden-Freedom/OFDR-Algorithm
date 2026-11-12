@@ -11,7 +11,22 @@
 | V1 | TLS 非线性扫频、辅助 MZI 和主 OFDR 离散反射信号生成 | 已由使用者本地运行并确认三幅图正常 |
 | V2 | 自行实现 CWT、SSWT、脊线提取和光频恢复 | 源码已提交；使用者已在 MATLAB 本地生成三组图，量化指标仍可继续评估 |
 | V3 | 直接 NUDFT 与 Gaussian Gridding NUFFT | 用户 MATLAB 运行已验证（相对 NUDFT 误差约 1.03e-5） |
-| V4 | SSWT + NUFFT 联合性能对照 | 源码已提供，待用户 MATLAB 本地运行验证 |
+| V4 | SSWT + NUFFT 联合性能对照 | 用户已在 MATLAB 本地运行验证（幅度谱相对误差约 0.92%） |
+| V5 | 光频校准误差传递、细网格峰宽与误差注入 | 已提供代码，等待用户 MATLAB 本地复核 |
+
+V5 的原始实验方案：[V5_CALIBRATION_ERROR_PROPAGATION_PLAN.md](docs/V5_CALIBRATION_ERROR_PROPAGATION_PLAN.md)；V5 实现和步骤：[V5_EXPERIMENT_GUIDE.md](docs/V5_EXPERIMENT_GUIDE.md)。
+
+## V5 运行方法：光频校准误差传递（最新阶段）
+
+此阶段严格先做 P0/P1，已新增实验 A–E 各类入口、失败记录和 MATLAB 数据保存。核心数据采用**无噪声单反射点**与真实扫描光频生成；只修改重构坐标，避免以错误坐标重新生成主信号而抵消误差。
+
+```matlab
+addpath('matlab/v5');
+smoke_test_v5;
+[cfg,ctx,results] = main_v5();
+```
+
+高级实验见 V5 指南；30 次×多SNR 和双峰矩阵不会在默认入口自动运行。输出默认保存在 `matlab/v5/output/`，不提交 Git。**V5 尚未在 MATLAB 实机验证。**
 
 完整设计方案见 [docs/SIMULATION_PLAN.md](docs/SIMULATION_PLAN.md)；V1 请读 [V1 实验指南](docs/V1_EXPERIMENT_GUIDE.md)，V2 请读 [V2 实验指南](docs/V2_EXPERIMENT_GUIDE.md)，V3 请读 [V3 实验指南](docs/V3_EXPERIMENT_GUIDE.md)，V4 请读 [V4 实验指南](docs/V4_EXPERIMENT_GUIDE.md)。
 

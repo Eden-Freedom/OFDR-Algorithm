@@ -7,18 +7,22 @@ function v5_plot_results(results,cfg)
     plot(z,abs(A.step3.truth)/peak,'k-','LineWidth',1.4);hold on;
     plot(z,abs(A.step3.sswt)/peak,'Color',[.1 .6 .25],'LineWidth',1.2);
     grid on;xlabel('Distance (mm)');ylabel('Amplitude / true peak');
-    title(sprintf('Ideal vs SSWT peak | coarse %.3f mm, fine %.3f mm', ...
-        A.coarse_metrics.fwhm_m*1e3,A.reference_fwhm_m*1e3));
+    title(sprintf('Ideal vs SSWT | coarse FWHM %.3f mm, fine FWHM %.3f mm, convergence %.3f um', ...
+        A.coarse_metrics.fwhm_m*1e3,A.reference_fwhm_m*1e3,A.fwhm_convergence_m*1e6));
     legend('True coordinates','SSWT coordinates','Location','best');
     figure('Name','V5 Figure D | proportional error versus distance','Color','w');
     epsilon=B.scale_ppm;
+    hMeasured=gobjects(numel(B.distances_m),1);
     for i=1:numel(B.distances_m)
         good=B.valid(i,:);
-        plot(epsilon(good),B.incremental_error_m(i,good)*1e3,'o-');hold on;
-        plot(epsilon(good),B.predicted_offset_m(i,good)*1e3,'k:');
+        hMeasured(i)=plot(epsilon(good),B.incremental_error_m(i,good)*1e3,'o-','LineWidth',1.1);hold on;
+        plot(epsilon(good),B.predicted_offset_m(i,good)*1e3,':','Color',get(hMeasured(i),'Color'));
     end
     grid on;xlabel('Scale error (ppm)');ylabel('Incremental peak displacement (mm)');
-    title('Measured shift versus -epsilon z (dotted analytical predictions)');
+    title(sprintf('Proportional error: solid=measured, dotted=theory | %d/%d valid, max diff %.1f um', ...
+        B.valid_count,numel(B.valid),B.max_prediction_disagreement_m*1e6));
+    names=arrayfun(@(v)sprintf('z = %.2f m',v),B.distances_m(:),'UniformOutput',false);
+    legend(hMeasured,names,'Location','eastoutside');
     figure('Name','V5 Figure E | SSWT residual magnification','Color','w');
     g=R.gamma;mag=nan(size(g));phase=mag;fwhm=mag;
     for i=1:numel(g)
@@ -29,11 +33,19 @@ function v5_plot_results(results,cfg)
             fwhm(i)=m.fwhm_growth*100;
         end
     end
-    subplot(3,1,1);plot(g,mag,'o-');ylabel('Magnitude relative L2');grid on;
-    subplot(3,1,2);plot(g,phase,'o-');ylabel('Fixed-position phase (rad)');grid on;
-    subplot(3,1,3);plot(g,fwhm,'o-');ylabel('FWHM growth (%)');
-    xlabel('SSWT error multiplier');grid on;
-    title('NaN / missing marker = failed validity gate, not silently corrected');
+    subplot(3,1,1);plot(g,mag,'o-');ylabel('Magnitude rel. L2');grid on;
+    title('Single-scan magnitude error (NOT a strain measurement)');
+    subplot(3,1,2);plot(g,phase,'o-');ylabel('Phase at fixed z (rad)');grid on;
+    title('Single-scan complex phase relative to true-coordinate reference (NOT gauge phase)');
+    subplot(3,1,3);plot(g,fwhm,'o-');ylabel('Power FWHM change (%)');
+    xlabel('SSWT residual multiplier gamma');grid on;
+    title('Peak width change; NaN means invalid, not zero');
+    if any(abs(g-1)<1e-12 & R.valid)
+        k=find(abs(g-1)<1e-12 & R.valid,1,'first');
+        annotation('textbox',[0.70 0.89 0.26 0.055], ...
+            'String',sprintf('gamma=1: mag %.4g, phase %.3f rad',mag(k),phase(k)), ...
+            'FitBoxToText','on','EdgeColor',[.65 .65 .65],'FontSize',9);
+    end
     if isfield(results,'D')
         D=results.D;
         figure('Name','V5 Figure B | SSWT error decomposition','Color','w');
@@ -41,6 +53,7 @@ function v5_plot_results(results,cfg)
         plot(D.baseline.time_s*1e3,D.baseline.q_decomposition.fitted_Hz/1e6,'--');
         xlabel('Time (ms)');ylabel('Optical-frequency error (MHz)');
         legend('SSWT total error','Weighted affine component','Location','best');grid on;
+        title('Decomposition of single-scan optical-frequency residual (NOT strain error)');
     end
     if isfield(results,'B_families')
         F=results.B_families;

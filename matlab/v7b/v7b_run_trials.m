@@ -22,6 +22,7 @@ function out=v7b_run_trials(cfg,n,group_idx,tag)
     out.training_before=nan(n,1);out.training_after=nan(n,1);
     out.affine_training_before=nan(n,1);out.affine_training_after=nan(n,1);
     out.hessian_rcond=nan(n,1);out.affine_hessian_rcond=nan(n,1);
+    out.data_hessian_rcond=nan(n,1);out.jacobian_rank=nan(n,1);
     out.train_count=nan(n,1);out.beta_l2_MHz=nan(n,1);
     out.max_correction_MHz=nan(n,1);out.affine_correction_MHz=nan(n,1);
     out.diff_rmse_MHz=nan(n,1);out.aux_ref_rmse_MHz=nan(n,1);
@@ -46,6 +47,8 @@ function out=v7b_run_trials(cfg,n,group_idx,tag)
             out.affine_training_before(j)=tr.affine_train_phase_before;
             out.affine_training_after(j)=tr.affine_train_phase_after;
             out.hessian_rcond(j)=tr.sapc_hessian_rcond;
+            out.data_hessian_rcond(j)=tr.sapc_data_hessian_rcond;
+            out.jacobian_rank(j)=tr.sapc_jacobian_rank;
             out.affine_hessian_rcond(j)=tr.affine_hessian_rcond;
             out.train_count(j)=tr.sapc_train_count;
             out.beta_l2_MHz(j)=tr.sapc_beta_l2_MHz;
@@ -60,6 +63,10 @@ function out=v7b_run_trials(cfg,n,group_idx,tag)
             if cfg.v7b.verbose
                 fprintf('[V7b %s] failure %d/%d: %s\n',tag,j,n,ME.message);
             end
+        end
+        if cfg.v7b.verbose && (mod(j,10)==0 || j==n)
+            fprintf('[V7b %s] %d/%d trials finished, %d valid\n',...
+                tag,j,n,nnz(out.success(1:j)));
         end
     end
     out.runtime_s=toc(t0);

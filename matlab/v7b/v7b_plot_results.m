@@ -48,10 +48,10 @@ function v7b_plot_results(cfg,results)
 
     figure('Name','V7b Figure 3 | Identifiability and failures','Color','w');
     subplot(2,1,1);
-    rc=r.hessian_rcond(good);
+    rc=r.data_hessian_rcond(good);
     semilogx(max(rc,eps),r.core_rmse(good,4)-r.core_rmse(good,5),'o');hold on;
     plot(xlim,[0 0],'k--');grid on;
-    xlabel('Hessian reciprocal condition number (higher = better conditioned)');
+    xlabel('Unregularized data-Hessian rcond (higher = better identified)');
     ylabel('SAPC Core gain vs affine (microstrain)');
     title('Observational diagnostic; correlation is not causation');
     subplot(2,1,2);

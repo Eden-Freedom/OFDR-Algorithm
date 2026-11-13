@@ -18,9 +18,9 @@
 
 ## Figure 3：拟合不稳定/可辨识性候选因素
 
-上图：横轴 Hessian 的**倒条件数** `rcond(H)`（对数尺度，越小可能越病态），纵轴 SAPC 相对 affine 的 Core RMSE 改善。下图：横轴 SAPC 最大校正量 (MHz)，纵轴 Core 改善。低条件数、很大的校正量或低训练点数若与退化共同出现，提示约束算法可能需要可信度门控。
+上图：横轴 未正则化数据 Hessian 的**倒条件数** `rcond(J^T J/N)`（对数尺度，越小可能越病态），纵轴 SAPC 相对 affine 的 Core RMSE 改善。下图：横轴 SAPC 最大校正量 (MHz)，纵轴 Core 改善。低条件数、很大的校正量或低训练点数若与退化共同出现，提示约束算法可能需要可信度门控。
 
-必须对比胜/负试次上的：`train_count`、`hessian_rcond`、`beta_l2_MHz`、`max_correction_MHz`、`diff_rmse_MHz`、`aux_ref_rmse_MHz`、`aux_meas_rmse_MHz`。这些诊断量不能用于修改当前盲测超参数，否则就会污染独立测试集。
+必须对比胜/负试次上的：`train_count`、`data_hessian_rcond`、`hessian_rcond`、`beta_l2_MHz`、`max_correction_MHz`、`diff_rmse_MHz`、`aux_ref_rmse_MHz`、`aux_meas_rmse_MHz`。这些诊断量不能用于修改当前盲测超参数，否则就会污染独立测试集。
 
 ## Figure 4：哪些物理条件可能导致失效？（需启用 conditions）
 

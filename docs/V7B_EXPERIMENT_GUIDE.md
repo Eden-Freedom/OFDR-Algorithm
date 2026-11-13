@@ -117,7 +117,7 @@ cfg.v7b.condition_repeats = 12;    % 仅预览；正式每条件 >= 30
 默认 `matlab/v7b/output/`：
 
 - `V7b_frozen_results.mat`：保存 `cfg` 和 `results`，包含全部失败原因；
-- `V7b_blind_trial_data.csv`：每试次的种子、Core/holdout/valid、Hessian rcond、训练点数、系数幅度等；
+- `V7b_blind_trial_data.csv`：每试次的种子、Core/holdout/valid、Hessian rcond（含正则项）和 data-only rcond（不含正则项）、训练点数、系数幅度等；
 - `V7b_condition_XX.csv`、`V7b_condition_summary.csv`：泛化条件试次级与汇总数据；
 - `figures/v7b_figure1_blind_comparison.png` 等：可视化。
 

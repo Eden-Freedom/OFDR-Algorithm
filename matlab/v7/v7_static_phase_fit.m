@@ -40,7 +40,12 @@ function out=v7_static_phase_fit(cfg,truth,reference_trace,measurement_signal,q_
             if ~valid,error('V7:Jacobian','有限差分坐标无效');end
             Jmat(:,j)=angle(exp(1i*(qphase-p)))/delta;
         end
-        H=(Jmat.'*Jmat)/numel(p)+reg*eye(K);
+        % V7b 诊断：先记录未正则化的数据可辨识性。
+        % 原 rcond(H) 含正则项，不能单独反映观测本身的秩信息。
+        Hdata=(Jmat.'*Jmat)/numel(p);
+        out.rcond_data_hessian=rcond(Hdata);
+        out.jacobian_rank=rank(Jmat);
+        H=Hdata+reg*eye(K);
         grad=(Jmat.'*p)/numel(p)+reg*beta;
         out.rcond_hessian=rcond(H);
         if out.rcond_hessian<cfg.v7.min_condition_rcond

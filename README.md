@@ -4,6 +4,18 @@
 
 > 正确缩写为 **OFDR**。仓库已统一为 `OFDR-Algorithm`。
 
+## 最新研究代码 V6d + V7（尚待 MATLAB 本地运行验证）
+
+- **V6d**：真实非零应变下、36 次配对试验的真值诊断消融（共模、线性坡度、非仿射、完整差异）；真值**只用于分解诊断和评价，不能用于部署校正**。[操作指南](docs/V6D_EXPERIMENT_GUIDE.md) · [逐图阅读](docs/V6D_FIGURE_READING_GUIDE.md)。
+- **V7 原型 SAPC**：只在预先确定的上游静止参考段拟合校准坐标的低维非仿射修正；受应变 core 与下游静止段都是不参与拟合的测试区域。包含简单平滑与静态 affine 基线。[操作指南](docs/V7_EXPERIMENT_GUIDE.md) · [逐图阅读](docs/V7_FIGURE_READING_GUIDE.md)。
+
+```matlab
+addpath('matlab/v6d'); smoke_test_v6d; [cfg6d,res6d]=main_v6d();
+addpath('matlab/v7');  smoke_test_v7;  [cfg7,res7]=main_v7();
+```
+
+**研究边界：** 这些源码还没有经过用户本地 MATLAB 运行验证；V7 不是已经取得性能提升的算法，不自动构成论文新颖性。当前的两次**真实扫频轨迹相同**、主探测噪声关闭，必须在严格无真值拟合的约束下检验跨种子、不同扫频和持出静态段效果。
+
 ## 最新版本 V6c：真实非零应变的前向与解调验证（源码待 MATLAB 验收）
 
 **新研究关口**：通过真实输入的 0/1/2/5/10/20 με 轴向应变场，使同一 Rayleigh 散射体在参考/测量扫描中拥有不同的载波往返相位与群时延；对比真值光频、共模 SSWT 和独立 SSWT 下的应变 RMSE，而不再只输出零应变下的等效应变代理。
@@ -59,7 +71,9 @@ smoke_test_v6b;
 | V5 | 光频校准误差传递、细网格峰宽与误差注入 | 用户已在 MATLAB 中运行并给出 P0/P1 输出 |
 | V6a | 零应变双扫描、瑞利散射相位、共模/差模误差、gauge 等效应变 | 已由使用者本地运行 |
 | V6b | 36 次重复：扫描间误差相关性、消融与统计 | 已由使用者本地运行并提供结果 |
-| V6c | 非零已知应变 Rayleigh 前向、真实应变恢复与 RMSE | 源码已编写，待 MATLAB 本地验收 |
+| V6c | 非零已知应变 Rayleigh 前向、真实应变恢复与 RMSE | 已由使用者 MATLAB 运行（36次） |
+| V6d | 36次非零应变下的真值诊断配对消融 | 源码待 MATLAB 本地运行 |
+| V7 | 静态锚段相位一致性校正原型（SAPC） | 源码待 MATLAB 本地运行及新颖性查验 |
 
 V5 的原始实验方案：[V5_CALIBRATION_ERROR_PROPAGATION_PLAN.md](docs/V5_CALIBRATION_ERROR_PROPAGATION_PLAN.md)；V5 实现和步骤：[V5_EXPERIMENT_GUIDE.md](docs/V5_EXPERIMENT_GUIDE.md)。
 

@@ -14,6 +14,23 @@
 
 **重要：** V5 当前的固定位置单扫描相位差不是应变误差；后续必须实现双扫描、瑞利散射、相位差及 gauge 差分后才能宣称改进应变精度。候选创新点尚需对标既有论文和可重复实验验证。
 
+## 最新阶段：V6a 零应变双扫描与相位误差传递
+
+V6a 在**同一真实 TLS 扫频、同一静态 Rayleigh 散射体和同一无噪声主干涉信号**条件下，比较真实/真实坐标、共模 SSWT 误差、独立 SSWT 校准，以及相同单扫描 RMSE/不同双扫描误差相关性。核心指标为扫描间 gauge 相位 RMS 和**零应变等效虚假应变代理量**。
+
+- [V6a 实验运行指南](docs/V6_EXPERIMENT_GUIDE.md)
+- [V6a 逐图阅读与科研判读指南](docs/V6_FIGURE_READING_GUIDE.md)
+- [论文导向研究路线](docs/PHASE_STRAIN_RESEARCH_ROADMAP.md)
+
+\`\`\`matlab
+addpath('matlab/v6');
+smoke_test_v6;
+[cfg,results]=main_v6();
+\`\`\`
+
+**关键科研边界：** V6a 尚未建立非零应变正演的相位灵敏度验证，输出的 με 属于**零应变等效代理量**，不构成实测应变准确度；V6b 才进入非零应变、独立真实扫频与统计验证。
+
+
 ## 开发进度
 
 | 版本 | 内容 | 状态 |
@@ -22,7 +39,8 @@
 | V2 | 自行实现 CWT、SSWT、脊线提取和光频恢复 | 源码已提交；使用者已在 MATLAB 本地生成三组图，量化指标仍可继续评估 |
 | V3 | 直接 NUDFT 与 Gaussian Gridding NUFFT | 用户 MATLAB 运行已验证（相对 NUDFT 误差约 1.03e-5） |
 | V4 | SSWT + NUFFT 联合性能对照 | 用户已在 MATLAB 本地运行验证（幅度谱相对误差约 0.92%） |
-| V5 | 光频校准误差传递、细网格峰宽与误差注入 | 已提供代码，等待用户 MATLAB 本地复核 |
+| V5 | 光频校准误差传递、细网格峰宽与误差注入 | 用户已在 MATLAB 本地运行 P0/P1，细网格 FWHM 约 1.178 mm |
+| V6a | 双扫描零应变、相干相位及等效虚假应变 | 代码已完成，待 MATLAB 本地实测 |
 
 V5 的原始实验方案：[V5_CALIBRATION_ERROR_PROPAGATION_PLAN.md](docs/V5_CALIBRATION_ERROR_PROPAGATION_PLAN.md)；V5 实现和步骤：[V5_EXPERIMENT_GUIDE.md](docs/V5_EXPERIMENT_GUIDE.md)。
 

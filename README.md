@@ -31,6 +31,18 @@ smoke_test_v6;
 **关键科研边界：** V6a 尚未建立非零应变正演的相位灵敏度验证，输出的 με 属于**零应变等效代理量**，不构成实测应变准确度；V6b 才进入非零应变、独立真实扫频与统计验证。
 
 
+## V6b：双扫描残差机理和统计验证
+
+V6a 的零应变共模与独立 SSWT 实验已由使用者在 MATLAB 中运行。V6b 接续实现**多随机种子配对 ρ 实验、共同有效 gauge 掩码、bootstrap 置信区间、SSWT 残差分量消融、距离×gauge 矩阵和独立 SSWT 重复**。
+
+```matlab
+addpath('matlab/v6b');
+smoke_test_v6b;
+[cfg,results]=main_v6b();
+```
+
+[实验指南](docs/V6B_EXPERIMENT_GUIDE.md) · [逐图阅读与论文假设](docs/V6B_FIGURE_READING_GUIDE.md)。默认少量重复仅供运行确认，不能视为论文级统计。指标仍是**零应变等效代理**，不是已校准的非零应变测量精度。
+
 ## 开发进度
 
 | 版本 | 内容 | 状态 |

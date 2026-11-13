@@ -1,7 +1,7 @@
 function cfg=config_v6d()
 %CONFIG_V6D V6d 配对误差分量消融：真值只参与诊断/评分，绝不作为新校正器。
     here=fileparts(mfilename('fullpath'));
-    addpath(fullfile(fileparts(here),'../v6c'));
+    addpath(fullfile(fileparts(here),'v6c'));
     cfg=config_v6c();
     cfg.v6c.save_results=false;cfg.v6c.make_plots=false;cfg.v6c.run_mc=false;
     cfg.v6d.repeats=36;

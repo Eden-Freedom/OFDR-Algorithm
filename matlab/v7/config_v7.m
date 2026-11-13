@@ -2,7 +2,7 @@ function cfg=config_v7()
 %CONFIG_V7 V7 非oracle静止参考段相位一致性校正（探索性原型）。
 % 注意：本原型只适用于预先知道静止参考段、双扫描共带、扫描模型可观测的条件。
     here=fileparts(mfilename('fullpath'));
-    addpath(fullfile(fileparts(here),'../v6d'));
+    addpath(fullfile(fileparts(here),'v6d'));
     cfg=config_v6d();cfg.v6d.save_results=false;cfg.v6d.make_plots=false;
     cfg.v7.output_dir=fullfile(here,'output');
     cfg.v7.save_results=true;cfg.v7.make_plots=true;

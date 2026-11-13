@@ -4,6 +4,29 @@
 
 > 正确缩写为 **OFDR**。仓库已统一为 `OFDR-Algorithm`。
 
+
+## V7c：基于空间阻塞交叉验证的可信度门控 SAPC（研究原型）
+
+根据 V7b 的100次新种子盲测，Full SAPC 比 Static affine 的平均 Core RMSE 小 0.003482 με，但仍有35/100试次退化。V7c 引入已知上游静态参考段内部的**空间交叉验证、25mm保护带、非仿射校正混合 α 与仿射回退**，研究能否在未参与拟合的下游和受应变区降低退化风险。默认先执行24次开发集，然后才显式运行不同种子的100次冻结测试。
+
+```matlab
+addpath('matlab/v7c');
+smoke_test_v7c;
+[cfg,dev] = main_v7c();
+
+cfg = config_v7c();
+cfg.v7c.run_development=false;
+cfg.v7c.run_frozen_test=true;
+[cfg,test] = main_v7c(cfg);
+```
+
+- [V7b 已观测结果与限制](docs/V7B_RESULTS_100_TRIALS_AND_17_CONDITIONS.md)
+- [V7c 完整实验指南](docs/V7C_EXPERIMENT_GUIDE.md)
+- [V7c 逐图阅读指南](docs/V7C_FIGURE_READING_GUIDE.md)
+- [V7c 冻结协议与严格验收判据](docs/V7C_PRE_REGISTERED_PROTOCOL.md)
+
+**注意**：V7c 的内部 CV 不是独立散射试次；在 MATLAB 运行并取得新种子结果之前，不宣称该门控比固定 SAPC 更好。
+
 ## 最新研究代码 V6d + V7（尚待 MATLAB 本地运行验证）
 
 - **V6d**：真实非零应变下、36 次配对试验的真值诊断消融（共模、线性坡度、非仿射、完整差异）；真值**只用于分解诊断和评价，不能用于部署校正**。[操作指南](docs/V6D_EXPERIMENT_GUIDE.md) · [逐图阅读](docs/V6D_FIGURE_READING_GUIDE.md)。
@@ -212,12 +235,3 @@ smoke_test_v1;    % 无噪声数学自检
 
 1. H. Dang et al., *Dynamic wavelength calibration based on synchrosqueezed wavelet transform*, Optics Express 30 (2022). https://doi.org/10.1364/OE.477771
 2. Z. Ding et al., *Note: Improving spatial resolution of optical frequency-domain reflectometry against frequency tuning nonlinearity using non-uniform fast Fourier transform*, Review of Scientific Instruments 83 (2012). https://doi.org/10.1063/1.4729376
-
-## V7b：冻结参数泛化验证与失效机制
-
-V7b 固定 V7 SAPC 的超参数，在100次全新随机试次中配对比较 SAPC 与 Static affine，记录训练条件数、最差退化和持出静止区表现。另提供17组预定义的 SNR、训练参考段、应变、Gauge 长度和 TLS 波动幅度条件扫描。代码尚待用户 MATLAB 本地运行验证。
-
-- [V7b MATLAB 入口](matlab/v7b/README.md)
-- [V7b 实验说明](docs/V7B_EXPERIMENT_GUIDE.md)
-- [V7b 每幅图如何看](docs/V7B_FIGURE_READING_GUIDE.md)
-- [V7b 冻结验证协议](docs/V7B_PRE_REGISTERED_PROTOCOL.md)

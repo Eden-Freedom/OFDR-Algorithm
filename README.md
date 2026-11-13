@@ -212,3 +212,12 @@ smoke_test_v1;    % 无噪声数学自检
 
 1. H. Dang et al., *Dynamic wavelength calibration based on synchrosqueezed wavelet transform*, Optics Express 30 (2022). https://doi.org/10.1364/OE.477771
 2. Z. Ding et al., *Note: Improving spatial resolution of optical frequency-domain reflectometry against frequency tuning nonlinearity using non-uniform fast Fourier transform*, Review of Scientific Instruments 83 (2012). https://doi.org/10.1063/1.4729376
+
+## V7b：冻结参数泛化验证与失效机制
+
+V7b 固定 V7 SAPC 的超参数，在100次全新随机试次中配对比较 SAPC 与 Static affine，记录训练条件数、最差退化和持出静止区表现。另提供17组预定义的 SNR、训练参考段、应变、Gauge 长度和 TLS 波动幅度条件扫描。代码尚待用户 MATLAB 本地运行验证。
+
+- [V7b MATLAB 入口](matlab/v7b/README.md)
+- [V7b 实验说明](docs/V7B_EXPERIMENT_GUIDE.md)
+- [V7b 每幅图如何看](docs/V7B_FIGURE_READING_GUIDE.md)
+- [V7b 冻结验证协议](docs/V7B_PRE_REGISTERED_PROTOCOL.md)

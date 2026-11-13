@@ -70,6 +70,18 @@ function out=run_v7_trial(cfg,truth,trial_index)
     out.sapc_train_phase_before=sapc.rms_before_rad;
     out.sapc_train_phase_after=sapc.rms_after_rad;
     out.q_delta_sswt_MHz=sqrt(mean((am.q_est_Hz-ar.q_est_Hz).^2))/1e6;
+    % V7b 只读取求解器诊断，不改变任何优化步骤或评分结果。
+    % 下列量仅用于事后失效机理分析；绝不用于本轮盲测选参。
+    out.sapc_train_count=sapc.train_count;
+    out.affine_train_count=affine.train_count;
+    out.sapc_hessian_rcond=sapc.rcond_hessian;
+    out.affine_hessian_rcond=affine.rcond_hessian;
+    out.sapc_correction_peak_MHz=max(abs(sapc.delta_q_Hz))/1e6;
+    out.affine_correction_peak_MHz=max(abs(affine.delta_q_Hz))/1e6;
+    out.sapc_beta_l2_MHz=norm(sapc.beta_MHz);
+    out.sapc_objective_history=sapc.objective_history;
+    out.aux_rmse_ref_MHz=ar.q_rmse_MHz; % oracle 真值只用于统计，非校正输入
+    out.aux_rmse_meas_MHz=am.q_rmse_MHz;
     out.valid=true;
     if trial_index==1
         out.example.z_gauge_m=z;

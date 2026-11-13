@@ -32,7 +32,16 @@ function [cfg,results]=main_v7c(cfg)
     if cfg.v7c.save_results
         folder=cfg.v7c.output_dir;
         if ~exist(folder,'dir'),mkdir(folder);end
-        save(fullfile(folder,'V7c_results.mat'),'cfg','results','-v7.3');
+        if isfield(results,'development') && isfield(results,'frozen_test')
+            name='V7c_development_and_frozen_results.mat';
+        elseif isfield(results,'frozen_test')
+            name='V7c_frozen_test_results.mat';
+        elseif isfield(results,'development')
+            name='V7c_development_results.mat';
+        else
+            name='V7c_conditions_results.mat';
+        end
+        save(fullfile(folder,name),'cfg','results','-v7.3');
         if isfield(results,'development')
             v7c_export_trials(folder,results.development,'V7c_DEVELOPMENT_trials.csv');
         end

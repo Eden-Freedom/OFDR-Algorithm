@@ -24,7 +24,7 @@ cfg.v7c.run_development = false;
 cfg.v7c.run_frozen_test = true;
 [cfg, test] = main_v7c(cfg);
 
-% 第三阶段：物理条件预览（独立组种子；不要用作测试集调参）
+% 第三阶段：17组物理条件预览（独立组种子；不要用作测试集调参）
 cfg = config_v7c();
 cfg.v7c.run_development = false;
 cfg.v7c.run_conditions = true;
@@ -67,7 +67,7 @@ r.extra_peak_MHz;
 r.fallback_reason;
 ```
 
-输出文件：`matlab/v7c/output/V7c_results.mat`、`V7c_DEVELOPMENT_trials.csv`、`V7c_FROZEN_TEST_trials.csv`、`V7c_conditions.csv` 等。**注意：两次运行同名 MAT 文件会覆盖**；应在每轮结果出炉后立即复制并归档、记录 Git commit SHA 和参数协议。
+输出文件：`matlab/v7c/output/V7c_development_results.mat`、`V7c_frozen_test_results.mat`、`V7c_conditions_results.mat`（按运行模式分别保存）、`V7c_DEVELOPMENT_trials.csv`、`V7c_FROZEN_TEST_trials.csv`、`V7c_conditions.csv` 等。**注意：在同一种模式重复运行仍会覆盖对应 MAT/CSV**；应在每轮结果出炉后复制并归档、记录 Git commit SHA 和参数协议。
 
 ## 已知限制与实验安全边界
 

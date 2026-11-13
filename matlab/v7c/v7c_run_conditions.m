@@ -14,6 +14,10 @@ function r=v7c_run_conditions(cfg)
     for v=[5 10 20]
         specs(end+1)=entry(sprintf('gauge_%g_mm',v),'gauge',v,[]);
     end
+    % 保留 V7b 已有的三组 TLS 扫频非线性幅度，以便横向对照。
+    for v=[0.06 0.12 0.20]
+        specs(end+1)=entry(sprintf('ripple_%.3f',v),'ripple',v,[]);
+    end
     r.specs=specs;r.runs=cell(numel(specs),1);r.summary=nan(numel(specs),10);
     r.n_groups=numel(specs);r.repeats=cfg.v7c.condition_repeats;
     for k=1:numel(specs)
@@ -24,6 +28,7 @@ function r=v7c_run_conditions(cfg)
             case 'train',local.v7.train_static_m=s.range;
             case 'strain',local.v7.strain_microeps=s.value;
             case 'gauge',local.v6.gauge_length_m=s.value/1000;
+            case 'ripple',local.laser.ripple_a=s.value;
         end
         % 开发与主盲测以外、每个条件完全不同的样本号。
         try

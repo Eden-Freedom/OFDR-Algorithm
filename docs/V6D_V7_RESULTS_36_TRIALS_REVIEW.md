@@ -12,22 +12,22 @@
 ## 2. 路径警告与修复
 
 此前：
-\`\`\`matlab
+```matlab
 % config_v6d.m; here = .../matlab/v6d
 addpath(fullfile(fileparts(here),'../v6c')); % 错：等价于 .../v6c
 % config_v7.m; here = .../matlab/v7
 addpath(fullfile(fileparts(here),'../v6d')); % 错：等价于 .../v6d
-\`\`\`
+```
 
 已修复为：
-\`\`\`matlab
+```matlab
 % matlab/v6d/config_v6d.m
 addpath(fullfile(fileparts(here),'v6c'));
 % matlab/v7/config_v7.m
 addpath(fullfile(fileparts(here),'v6d'));
-\`\`\`
+```
 
-MATLAB addpath 对不存在路径的警告不等于求值失败。其他入口可能已经正确添加必要路径；验证：\`which config_v6c -all\`、\`which config_v6d -all\`、\`which v6c_forward_pair -all\`、\`which v7_static_phase_fit -all\`。更新后重新启动 MATLAB 或执行 \`rehash\`，分别重跑 smoke。
+MATLAB addpath 对不存在路径的警告不等于求值失败。其他入口可能已经正确添加必要路径；验证：`which config_v6c -all`、`which config_v6d -all`、`which v6c_forward_pair -all`、`which v7_static_phase_fit -all`。更新后重新启动 MATLAB 或执行 `rehash`，分别重跑 smoke。
 
 ## 3. V6d 数据：36 次成功、0 失败
 
@@ -40,10 +40,10 @@ MATLAB addpath 对不存在路径的警告不等于求值失败。其他入口�
 
 **关键解释**：
 
-1. \`no_diff\` 是参考与测量共用**带误差的参考 SSWT 坐标**，**不是** oracle/oracle。其 Core RMSE 仍大于 0。
+1. `no_diff` 是参考与测量共用**带误差的参考 SSWT 坐标**，**不是** oracle/oracle。其 Core RMSE 仍大于 0。
 2. 静止区：非仿射组与 full 接近，坡度组远低于 full，支持“非仿射残差是虚假应变的重要因素”。
 3. Core: ramp 与 nonaffine 都让 RMSE 上升，full 通常更高；不能将 RMS 简单相减后归为正交贡献。需继续看配对差 CI、强度与散射条件依赖。
-4. 分解使用 \`truth.nu_offset_Hz\` 和真实参考权重，是**oracle 机理诊断**，不能把该分解直接当作 V7 可部署校正器。
+4. 分解使用 `truth.nu_offset_Hz` 和真实参考权重，是**oracle 机理诊断**，不能把该分解直接当作 V7 可部署校正器。
 5. Figure 2 上图的点如果落在 y=x 下方，代表 nonlinear-only Core RMSE 小于 full；下图表明 slope 和 nonaffine RMS 跨 trial 有分布，不能单凭散点声称二者不相关。
 
 ## 4. V7 数据：36 次成功、0 失败，施加 5 με
@@ -57,8 +57,8 @@ MATLAB addpath 对不存在路径的警告不等于求值失败。其他入口�
 | SAPC | 0.2140 | 0.2745 | 90.4 |
 
 相对 Independent SSWT：
-- Core 平均误差下降 \`(0.2239-0.2140)/0.2239 ≈ 4.42%\`；绝对收益 0.0099 με，配对 bootstrap [0.0053,0.0149] με。
-- 下游静止持出 RMS 下降约 \`(0.2922-0.2745)/0.2922 ≈ 6.06%\`；**尚未报告配对 CI**。
+- Core 平均误差下降 `(0.2239-0.2140)/0.2239 ≈ 4.42%`；绝对收益 0.0099 με，配对 bootstrap [0.0053,0.0149] με。
+- 下游静止持出 RMS 下降约 `(0.2922-0.2745)/0.2922 ≈ 6.06%`；**尚未报告配对 CI**。
 - 平均有效比例只差 0.1 个百分点；**尚未报告配对 CI**。
 - 相比 Oracle 的误差缺口从 0.1147 缩至 0.1048 με；在这个固定条件下消除了约 8.6% 的缺口，距离理想状态仍明显。
 
@@ -68,9 +68,9 @@ Figure 1：总体表现和持出分数；Figure 2：每一个配对 trial，低�
 
 ## 5. 必做：针对 affine 与静态持出区计算配对置信区间
 
-运行后，从 \`main_v7\` 的输出 \`results\` 读取数组。**不要**对每个距离像素 bootstrap，独立样本单位是整次 trial。
+运行后，从 `main_v7` 的输出 `results` 读取数组。**不要**对每个距离像素 bootstrap，独立样本单位是整次 trial。
 
-\`\`\`matlab
+```matlab
 [cfg, r] = main_v7();
 good = r.success;
 % 列：1 oracle, 2 raw SSWT, 3 smooth, 4 static affine, 5 SAPC
@@ -89,9 +89,9 @@ fprintf('SAPC vs affine core 95%% CI [%.5f, %.5f] ue\n',lo,hi);
 fprintf('SAPC vs raw holdout 95%% CI [%.5f, %.5f] ue\n',lo,hi);
 [lo,hi]=v6b_bootstrap_ci(gain_affine_holdout,2000,20261115);
 fprintf('SAPC vs affine holdout 95%% CI [%.5f, %.5f] ue\n',lo,hi);
-\`\`\`
+```
 
-> 若重跑时 \`cfg.v7.repeats\` 被恢复为 8，请显式设置为 36 并调用 \`main_v7(cfg)\`，否则不应把 8 次演示 CI 当作 36 次结果。
+> 若重跑时 `cfg.v7.repeats` 被恢复为 8，请显式设置为 36 并调用 `main_v7(cfg)`，否则不应把 8 次演示 CI 当作 36 次结果。
 
 ## 6. 后续论文决策与防止过拟合
 

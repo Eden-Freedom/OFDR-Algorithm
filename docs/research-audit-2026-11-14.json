@@ -1,0 +1,193 @@
+{
+  "scope": "Post-hoc reanalysis of previously observed development data; no new algorithm validation.",
+  "coverage": {
+    "total_grid_gauges": 4085,
+    "roi_midpoint_gauges": 2201,
+    "roi_endpoint_gauges": 2189,
+    "dz_mm": 0.81776226158014609,
+    "actual_gauge_mm": 9.8131471389617531,
+    "boxcar_endpoint_support_mm": 16.355245231602922,
+    "reported_common_full_grid": 0.48483272133822924,
+    "common_roi_midpoint": 0.89983719521429661,
+    "common_roi_endpoints": 0.9047700624333791,
+    "mean_individual_roi_midpoint": [
+      0.9159283658942905,
+      0.90831818870210512,
+      0.90214675147660151,
+      0.90869680448281109,
+      0.90822353475692852,
+      0.90831818870210512,
+      0.90831818870210512
+    ],
+    "mean_common_count": 1980.5416666666667,
+    "example_common_count": 1999,
+    "extra_loss_vs_affine_pp": 0.88596092685144789
+  },
+  "v7d": {
+    "mean_core": [
+      0.10876150470844807,
+      0.21717788158017715,
+      0.36730039982299417,
+      0.21322972672934526,
+      0.21206298029408058,
+      0.21282357420225559,
+      0.21282357420225559
+    ],
+    "mean_holdout": [
+      0.01206685998472924,
+      0.28531712678687876,
+      0.51226653822851109,
+      0.27914966688712717,
+      0.276472781584522,
+      0.27892971231523905,
+      0.27892971231523905
+    ],
+    "max_core_c_d_difference": 0,
+    "max_holdout_c_d_difference": 0,
+    "exposed": 0,
+    "exposure_zero_event_upper95_one_sided": 0.1173461561549487,
+    "full_candidates_removed_in_folds": 8,
+    "accepted": 9,
+    "accepted_better_than_affine": 5,
+    "accepted_worse_than_affine": 4,
+    "rejected_full_would_be_better": 11,
+    "rejected_full_would_be_worse": 4,
+    "full_better_count": 16,
+    "full_worse_count": 8,
+    "affine_minus_full_mean": 0.0011667464352646342,
+    "affine_minus_gate_mean": 0.00040615252708969238,
+    "perfect_information_binary_selector_mean": 0.2095386759240421,
+    "binary_selector_gain_vs_affine": 0.0036910508053031366,
+    "binary_selector_regret_of_gate": 0.0032848982782134445,
+    "elapsed_s": 12.9715686,
+    "mean_core_bias": [
+      0.012447865443810054,
+      0.0051814239452783557,
+      0.00730107398129276,
+      0.00578252718391864,
+      0.0050528852158763455,
+      0.0053318416799250359,
+      0.0053318416799250359
+    ],
+    "mean_squared_core_rmse": [
+      0.012011689474008802,
+      0.047748730432039914,
+      0.13786425766214191,
+      0.046007946461962129,
+      0.04543868113292792,
+      0.045822309101701521,
+      0.045822309101701521
+    ]
+  },
+  "v6c": {
+    "scope": "One previously observed scatter/aux realization; fixed core across all 6 strain levels and 3 methods.",
+    "methods": [
+      "oracle",
+      "common_sswt",
+      "independent_sswt"
+    ],
+    "strain_microeps": [
+      0,
+      1,
+      2,
+      5,
+      10,
+      20
+    ],
+    "fixed_core_count": 500,
+    "core_rmse": [
+      [
+        0,
+        0,
+        0.1773802528667327
+      ],
+      [
+        0.017807379058067976,
+        0.10673556038606406,
+        0.1869801834747222
+      ],
+      [
+        0.035636759907258675,
+        0.14086839553147479,
+        0.18906558379267852
+      ],
+      [
+        0.089262906224658226,
+        0.19185549689261963,
+        0.1950032560083122
+      ],
+      [
+        0.17922929371354351,
+        0.23307499491374048,
+        0.27425832181155146
+      ],
+      [
+        0.36249099226471293,
+        0.4014355384730488,
+        0.36861230825680846
+      ]
+    ],
+    "raw_core_rmse": [
+      [
+        0,
+        0,
+        0.5024306326207193
+      ],
+      [
+        0.0708901445485576,
+        0.29956098269028519,
+        0.4956165658661732
+      ],
+      [
+        0.14175520293517202,
+        0.496557333184604,
+        0.51869095077753236
+      ],
+      [
+        0.35409446902098,
+        0.66873068445369843,
+        0.64414194490876309
+      ],
+      [
+        0.70792075366012686,
+        0.85196667316455033,
+        0.903188048674823
+      ],
+      [
+        1.4201230058649272,
+        1.5185878039384777,
+        1.5118382568753943
+      ]
+    ]
+  },
+  "v6d": {
+    "n": 36,
+    "labels": [
+      "no_diff",
+      "ramp_only",
+      "nonlinear_only",
+      "full_diff"
+    ],
+    "mean_core": [
+      0.20767948163817843,
+      0.21321472693911836,
+      0.21664991536419073,
+      0.22396183140208123
+    ],
+    "mean_static": [
+      0.031327176091490022,
+      0.054047245560406229,
+      0.2189433804756479,
+      0.22801794998686647
+    ],
+    "full_minus_no_diff_core": 0.016282349763902804,
+    "full_minus_no_diff_static": 0.19669077389537645
+  },
+  "checks_passed": [
+    "integer common counts",
+    "example mask match",
+    "common inside ROI",
+    "integer individual counts with ROI denominator",
+    "fixed V6c core across methods and strains"
+  ]
+}

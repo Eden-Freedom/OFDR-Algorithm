@@ -1,0 +1,25 @@
+trial,success,E_MHz,E_margin_MHz,full_E_exceeds_limit,alpha_v7c,alpha_v7d,changed,cv_folds_v7c,cv_folds_v7d,full_nonaffine_count,fold_nonaffine_count_if_CV_executed,core_gain_vs_v7c,holdout_gain_vs_v7c,valid_gain_vs_v7c,common_valid_fraction,common_core_count,common_holdout_count,reason_v7c,reason_v7d
+1,1,0.243707298278809,0.556292701721191,0,0,0,0,1,1,4,4,0,0,0,0.489351285189718,525,492,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+2,1,0.207529377197266,0.592470622802734,0,0,0,0,1,1,4,4,0,0,0,0.486658506731946,524,499,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+3,1,0.167279106372833,0.632720893627167,0,0,0,0,1,1,4,4,0,0,0,0.48641370869033,514,498,CV selected affine,CV selected affine
+4,1,0.272387908725739,0.527612091274261,0,1,1,0,1,1,4,4,0,0,0,0.490085679314565,525,493,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+5,1,0.149036592597961,0.650963407402039,0,0,0,0,1,1,4,4,0,0,0,0.48249694002448,514,480,CV selected affine,CV selected affine
+6,1,0.581668107543945,0.218331892456055,0,0,0,0,1,1,4,4,0,0,0,0.482252141982864,522,483,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+7,1,0.546028794052124,0.253971205947876,0,0,0,0,1,1,4,4,0,0,0,0.478335373317013,485,486,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+8,1,0.709913614868164,0.090086385131836,0,0.5,0.5,0,1,1,4,3,0,0,0,0.492778457772338,516,508,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+9,1,0.629366280567169,0.170633719432831,0,1,1,0,1,1,4,4,0,0,0,0.48641370869033,502,506,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+10,1,0.184844170440674,0.615155829559326,0,0,0,0,1,1,4,4,0,0,0,0.492044063647491,516,508,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+11,1,0.655208949752808,0.144791050247192,0,0.75,0.75,0,1,1,4,4,0,0,0,0.495716034271726,530,500,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+12,1,0.0486279176940918,0.751372082305908,0,0,0,0,1,1,4,4,0,0,0,0.481762545899633,527,478,CV selected affine,CV selected affine
+13,1,0.643237537460327,0.156762462539673,0,0.75,0.75,0,1,1,4,4,0,0,0,0.483476132190942,519,487,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+14,1,0.262354667564392,0.537645332435608,0,0,0,0,1,1,4,4,0,0,0,0.479314565483476,524,477,CV selected affine,CV selected affine
+15,1,0.479466856582642,0.320533143417358,0,0,0,0,1,1,4,4,0,0,0,0.479314565483476,509,511,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+16,1,0.493338582229614,0.306661417770386,0,0,0,0,1,1,4,4,0,0,0,0.483476132190942,499,495,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+17,1,0.256867143913269,0.543132856086731,0,0,0,0,1,1,4,4,0,0,0,0.484455324357405,511,491,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+18,1,0.103331837253571,0.69666816274643,0,0,0,0,1,1,4,4,0,0,0,0.477600979192166,506,491,CV selected affine,CV selected affine
+19,1,0.438533858699799,0.361466141300201,0,1,1,0,1,1,4,4,0,0,0,0.480048959608323,509,494,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+20,1,0.190227691982269,0.609772308017731,0,0,0,0,1,1,4,4,0,0,0,0.488616891064871,520,505,CV selected affine,CV selected affine
+21,1,0.118468407974243,0.681531592025757,0,0,0,0,1,1,4,4,0,0,0,0.489351285189718,534,496,CV gain below predeclared trust threshold,CV gain below predeclared trust threshold
+22,1,0.522873292434692,0.277126707565308,0,1,1,0,1,1,4,4,0,0,0,0.481517747858017,506,509,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+23,1,0.18426616835022,0.61573383164978,0,1,1,0,1,1,4,4,0,0,0,0.481028151774786,495,497,CV accepted non-affine blend,CV accepted feasible non-affine candidate
+24,1,0.440603895690918,0.359396104309082,0,1,1,0,1,1,4,4,0,0,0,0.483476132190942,522,482,CV accepted non-affine blend,CV accepted feasible non-affine candidate

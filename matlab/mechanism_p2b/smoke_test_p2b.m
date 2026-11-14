@@ -2,6 +2,7 @@ function smoke_test_p2b()
 %SMOKE_TEST_P2B 2个新开发trial，共模有限差分预测端到端测试。
 % 数据计入以后12次开发重复的前两个trial；不额外占用独立测试集。
     smoke_test_p2b_math();
+    smoke_test_p2b_summary();
     cfg=config_p2b();
     cfg.p2b.development_repeats=2;
     cfg.p2b.make_plots=false;

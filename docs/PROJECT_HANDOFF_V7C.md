@@ -11,7 +11,7 @@
 - 中文交流，用户正在系统学习 OFDR（光频域反射仪）的 SSWT（同步压缩小波变换）与 NUFFT（非均匀快速傅里叶变换），目的是**通过可复现 MATLAB 仿真寻找能够发表论文的科学问题与可验证算法改进**。
 - 用户在 Windows 的 MATLAB 中从 GitHub 拉取代码，**助手负责**给出严谨实验设计、详细中文注释的 .m 代码、逐图解释文档、GitHub 版本管理；用户自行运行，并把图、日志回传。
 - **分析风格**：先结论，再公式与物理含义，再数字证据与局限，区分“数学公式自检 / 仿真样本 / 多试次统计 / 真实硬件验证”；严格陈述是否是研究假设、还是已验证结论。不虚构 MATLAB 实机结果，不宣称已有论文创新性。
-- 每次改动优先复用既有数值核，不破坏历史版本。配套 \`docs/<VERSION>_EXPERIMENT_GUIDE.md\` 和 \`docs/<VERSION>_FIGURE_READING_GUIDE.md\`，写明横纵轴、单位、对比方法、数据字段、实验可证伪性、失败条件。必要时增加 \`PRE_REGISTERED_PROTOCOL\`。
+- 每次改动优先复用既有数值核，不破坏历史版本。配套 `docs/<VERSION>_EXPERIMENT_GUIDE.md` 和 `docs/<VERSION>_FIGURE_READING_GUIDE.md`，写明横纵轴、单位、对比方法、数据字段、实验可证伪性、失败条件。必要时增加 `PRE_REGISTERED_PROTOCOL`。
 - 每个实验坚持：配对试次、以 trial 而不是像素为 bootstrap 单位、共同有效空间掩码、记录 valid fraction、失败率、随机种子；防止 oracle 真值信息进入真实算法拟合，防止把真实应变相位校正掉。
 - 不要仅以光频 RMSE、峰宽或者单次复相位偏差评价应变算法；主指标是**真实非零应变 Core RMSE、未应变持出区虚假应变 RMS、Gauge 相位、有效位置比例和失败率**。
 - 冻结盲测种子不能用于调参；任何受盲测结果影响的新算法需新增协议和新的外部测试种子。
@@ -53,15 +53,15 @@ SAPC 相比 Static affine 的 mean Core RMSE gain（με），gain>0 为改善�
 - 主探测噪声关闭；有固定的合成 Rayleigh 散射背景。
 - 训练仅允许已知的上游静止段。受应变区、下游静止持出区以及真实光频只用于独立评价，不进入模型拟合。
 - 基线：Raw SSWT、Smoothed SSWT、Static affine、Full SAPC、CV-SAPC，Oracle 作理想参照。
-- 低维修正：\`q_corrected = q_affine + alpha * (q_sapc - q_affine)\`，\`alpha∈[0,.25,.5,.75,1]\`。
-- V7c 协议 ID：\`V7C_CV_SAPC_2026-11-13_B\`。冻结的关键配置见 \`matlab/v7c/config_v7c.m\`、\`matlab/v7c/v7c_assert_protocol.m\`、\`docs/V7C_PRE_REGISTERED_PROTOCOL.md\`。
+- 低维修正：`q_corrected = q_affine + alpha * (q_sapc - q_affine)`，`alpha∈[0,.25,.5,.75,1]`。
+- V7c 协议 ID：`V7C_CV_SAPC_2026-11-13_B`。冻结的关键配置见 `matlab/v7c/config_v7c.m`、`matlab/v7c/v7c_assert_protocol.m`、`docs/V7C_PRE_REGISTERED_PROTOCOL.md`。
 - V7c **目前没有运行成功的 MATLAB 样本**，不能得出“CV-SAPC优于 SAPC”的科研结论。
 
 ## 4. 紧急阻塞：V7c smoke 0/2
 
 用户 MATLAB 原始输出：
 
-\`\`\`text
+```text
 ========== V7c | DEVELOPMENT =========
 Successful 0/2 | failures 2 (100.00%) | non-affine accepted NaN%
 V7c actual elapsed time 0.40s. Samples with failures remain in the denominator.
@@ -70,26 +70,26 @@ Development and frozen testing must NEVER use the same sample seeds.
 错误使用 assert
 至少一个试次失败：检查 failure_reason
 出错 smoke_test_v7c (第 10 行)
-\`\`\`
+```
 
-**诊断事实**：在 \`v7c_run_trials\` 中，内层 \`try/catch\` 把异常保存到了 \`out.failure_id{t}\`、\`out.failure_reason{t}\`。末尾的 \`assert\` 只是二次失败。当前无法在尚未拿到这两个字段前确定根因，不能猜测是算法本身或训练 mask。
+**诊断事实**：在 `v7c_run_trials` 中，内层 `try/catch` 把异常保存到了 `out.failure_id{t}`、`out.failure_reason{t}`。末尾的 `assert` 只是二次失败。当前无法在尚未拿到这两个字段前确定根因，不能猜测是算法本身或训练 mask。
 
-为了让问题易于诊断，GitHub 已添加补丁：\`smoke_test_v7c\` 开启 verbose，在失败时列印试次 ID 和 Reason；\`v7c_run_trials\` 在 verbose 下输出 \`getReport(ME,'extended','hyperlinks','off')\`，包括 MATLAB 调用堆栈。
+为了让问题易于诊断，GitHub 已添加补丁：`smoke_test_v7c` 开启 verbose，在失败时列印试次 ID 和 Reason；`v7c_run_trials` 在 verbose 下输出 `getReport(ME,'extended','hyperlinks','off')`，包括 MATLAB 调用堆栈。
 
 运行（仓库根目录）：
 
-\`\`\`matlab
+```matlab
 !git switch main
 !git pull --ff-only origin main
 addpath('matlab/v7c')
 clear smoke_test_v7c v7c_run_trials
 rehash
 smoke_test_v7c
-\`\`\`
+```
 
 或者**无需补丁**，手动读取真实失败：
 
-\`\`\`matlab
+```matlab
 cfg=config_v7c();
 cfg.v7c.development_repeats=2;
 cfg.v7c.run_frozen_test=false;
@@ -99,7 +99,7 @@ cfg.v7c.make_plots=false;
 [cfg,r]=main_v7c(cfg);
 disp(r.development.failure_id);
 disp(r.development.failure_reason);
-\`\`\`
+```
 
 之后把完整异常 ID、Reason、堆栈发给新的对话，先修复并保证两个开发 trial 成功，然后运行 24 次开发集。**在修复完成和协议明确锁定前，不准运行 100 次冻结测试。**
 

@@ -85,3 +85,42 @@ disp(s);
 - **已证实**：GitHub 原文件有一个非法 `{k]` 索引符号；该语法错误能解释用户所见相同 failure ID 与堆栈。
 - **已提交的修复**：修改为合法的 cell 索引 `{k}`。
 - **未证实**：MATLAB 实机 smoke 通过、24 次开发集表现、门控可靠性、CV-SAPC 相对 Full SAPC 的改善，及任何论文创新性。
+
+## 6. 第二次 smoke 报错：全部 trial 成功，但汇总结构体赋值失败（2026-11-13）
+
+用户在上一轮修复分支上实际执行后得到：
+
+```text
+[V7c development] 2/2 complete, valid=2
+在不同结构体之间进行下标赋值。
+出错 v7c_summarize (第 32 行)
+    s.comparisons(k)=co;
+```
+
+**证据**：两个 trial 已经走完 `v7c_run_trial`，但统计汇总尚未完成；因此还不能称整个 smoke 已通过。该错误不是相位/应变算法退化。
+
+**根因**：`v7c_summarize` 先将 `s.comparisons=struct([])` 初始化成**零字段**空结构体，随后对带有 `versus`、`core_gain_mean`、`core_gain_CI95` 等字段的 `co` 直接执行 `s.comparisons(k)=co`。MATLAB 不允许这样的下标赋值。
+
+**第二补丁**：第一次遍历用 `s.comparisons=co` 建立字段；其后执行 `s.comparisons(k)=co`。没有改变配对 RMSE、bootstrap、门控逻辑或原实验种子。
+
+新增独立快速单元测试 `matlab/v7c/smoke_test_v7c_summary.m`：纯合成数组检查 3 个统计对照、配对 gain、失败试次仍计入分母和零成功分支，**不调用仿真也不触碰冻结种子**。
+
+### 再次运行（当前已有该本地分支）
+
+```matlab
+% MATLAB 工作目录仍须为仓库根目录
+!git switch fix/v7c-smoke-brace-20261113
+!git pull --ff-only
+addpath('matlab/v7c');
+which v7c_summarize -all
+clear v7c_summarize smoke_test_v7c_summary smoke_test_v7c v7c_run_trials
+rehash
+
+% 首先几乎不需要光学运算的统计单元测试
+smoke_test_v7c_summary
+
+% 然后运行原本的两个开发试次，检查完整 smoke
+smoke_test_v7c
+```
+
+**判定**：统计单元测试应打印 `[V7c summary unit] PASS`，完整 smoke 最终应打印 `[V7c smoke] PASS`。此处是**验收预期，不是已经得到的 MATLAB 输出**。若有新报错，必须继续定位真实异常。保持 `run_frozen_test=false`；仅完整 smoke 通过后才跑 24 次开发集。

@@ -17,7 +17,7 @@
 
 ## 2. 为什么 NaN 不是 CV 预测失误
 
-已重新核对 `matlab/v7c/v7c_cv_gate.m`：首先初始化 alpha=0、cv_folds_ok=false、cv_gain_fraction=NaN，然后先做未正则 Hessian/rank 检查；接着检查完整SAPC相对Affine的额外修正峰值。若大于固定0.8 MHz则立即设置 `non-affine correction size gate` 并 return。两折 CV 循环位于 return 之后。所以 Trial 19 **没有执行折内CV**，NaN表示未计算，不代表CV评分很差。需要直接读取 `results.development.extra_peak_MHz(19)` 才能报告确切峰值，当前不能捏造数值。
+已重新核对 `matlab/v7c/v7c_cv_gate.m`：首先初始化 alpha=0、cv_folds_ok=false、cv_gain_fraction=NaN，然后先做未正则 Hessian/rank 检查；接着检查完整SAPC相对Affine的额外修正峰值。若大于固定0.8 MHz则立即设置 `non-affine correction size gate` 并 return。两折 CV 循环位于 return 之后。所以 Trial 19 **没有执行折内CV**，NaN表示未计算，不代表CV评分很差。后续 MATLAB 实机只读审计已确认：Trial 19 的 `results.development.extra_peak_MHz(19)=0.852542` MHz（输出精度至6位小数），仅超出 0.8 MHz 约 6.57%。
 
 ## 3. 数学上值得进一步研究的设计边界（尚未验证新算法）
 
@@ -31,7 +31,7 @@
 
 ## 5. 利用现有结果做只读审计（无冻结集）
 
-新文件 `matlab/v7c/v7c_audit_size_gate_dev.m` 从已保存 `V7c_development_results.mat` 读取 `extra_peak_MHz`、门控原因、CV是否真正运行，以及每个候选alpha是否满足**单独的额外修正幅度上限**。另有纯合成数据单元测试 `smoke_test_v7c_size_gate_audit.m`。两者尚未经过用户MATLAB实机验证。
+新文件 `matlab/v7c/v7c_audit_size_gate_dev.m` 从已保存 `V7c_development_results.mat` 读取 `extra_peak_MHz`、门控原因、CV是否真正运行，以及每个候选alpha是否满足**单独的额外修正幅度上限**。另有纯合成数据单元测试 `smoke_test_v7c_size_gate_audit.m`。用户 MATLAB 实机已经验证合成单元测试 PASS，且已对实际 24 次开发集完成只读审计；此次没有运行新随机试次。
 
 ```matlab
 !git pull --ff-only
@@ -50,4 +50,22 @@ disp(a.refused_candidates_cell{19});
 
 24次CV相对Full SAPC的Core gain均值 -0.00086688 με；Trial19 gain=-0.033498。若仅做 leave-one-out 敏感性计算，剩余23次均值约+0.000552；不允许删Trial19作为主结果。Holdout gain均值 -0.002554；同理去除Trial19的 -0.097 后约+0.00155。这说明均值对极端试次敏感，不等于方法平均风险已被改进。
 
-当前优先确认Trial19的E实际数值，并比较全部提前拒绝试次的门控原因与物理误差。暂不运行100次冻结测试、不调参、不宣称论文创新。
+Trial19的E已经由实机确认。当前应停止围绕同一硬门限反复调参，转向解释幅度可行性与真实应变收益之间的关系。暂不运行100次冻结测试、不调参、不宣称论文创新。
+
+## 7. 用户 MATLAB 实机补充审计：精确峰值与候选幅度（2026-11-13）
+
+实际输出：
+
+```text
+[V7c size-gate audit unit] PASS: hard precheck, candidate-size bounds, failures.
+[V7c | DEV-only extra-size precheck audit]
+已执行成功 24/24；固定额外修正峰值门限 0.800000 MHz
+E超限 1；因幅度提前拒绝 1；其中 Full SAPC Core 较优 1，Holdout 较优 1
+trial 19: E=0.852542 MHz; chosen alpha=0.00; CV folds executed=0
+  full vs affine Core gain=+0.033498 με; Holdout gain=+0.097000 με
+  candidate alpha passing ONLY the final-fit extra-size cap: 0.00 0.25 0.50 0.75
+```
+
+按输出精度，超限量为 0.052542 MHz，即相对原限值 +6.56775%。对每个网格候选，仅额外修正幅度分别是：α=0 → 0 MHz、0.25 → 0.2131355 MHz、0.5 → 0.426271 MHz、0.75 → 0.6394065 MHz、1 → 0.852542 MHz。前三个非零候选满足**单项额外幅度**约束，但不代表通过折内CV、总修正幅度、频率单调性，也不代表相较强基线的实际应变收益。
+
+本 24 次开发集只有一个试次 E 超限，因此不能把全部 13 次 affine 回退或 7 次“拒绝 full 但 full Core 更优”都归因于幅度门限；其中仅一个确认为该门限提前拒绝。若把 Trial19从主结果中剔除会改变效应方向，但**不得做此处理**。完整 V7c 方法目前未通过开发集的预注册主指标；新策略如需开发，必须在 V7d 分支另立协议，并使用全新开发与冻结种子。

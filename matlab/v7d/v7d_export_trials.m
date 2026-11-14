@@ -1,6 +1,17 @@
 function v7d_export_trials(folder,r)
 %V7D_EXPORT_TRIALS 逐试次保存全部成功/失败记录，禁止筛掉退化样本。
     if ~exist(folder,'dir'),mkdir(folder);end
+    % MATLAB writetable 对 cell 中的未赋值 [] 类型有版本差异；
+    % 显式规范成空字符，失败试次仍作为完整CSV行导出。
+    textFields={'reason_v7c','reason_v7d','failure_id','failure_reason'};
+    for j=1:numel(textFields)
+        field=textFields{j};
+        for i=1:r.n_trials
+            if isempty(r.(field){i})
+                r.(field){i}='';
+            end
+        end
+    end
     trial=(1:r.n_trials).';
     T=table(trial,logical(r.success(:)),r.seed_scatter(:), ...
         r.seed_ref(:),r.seed_meas(:), ...

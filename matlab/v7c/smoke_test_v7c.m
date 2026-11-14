@@ -3,11 +3,21 @@ function smoke_test_v7c()
     cfg=config_v7c();cfg.v7c.development_repeats=2;
     cfg.v7c.run_frozen_test=false;cfg.v7c.run_conditions=false;
     cfg.v7c.make_plots=false;cfg.v7c.save_results=false;
+    cfg.v7c.verbose=true; % Smoke 失败时必须输出实际异常，不能只看到最后的 assert
     v7c_assert_protocol(cfg);
     [~,r]=main_v7c(cfg);
     x=r.development;
     assert(x.n_trials==2,'Smoke 必须恰好包含两个配对试次');
-    assert(nnz(x.success)==2,'至少一个试次失败：检查 failure_reason');
+    if nnz(x.success)~=2
+        failed=find(~x.success);
+        fprintf(2,'[V7c smoke] %d/2 trials failed; original reasons below:\n',numel(failed));
+        for i=failed(:).'
+            fprintf(2,'  Trial %d | ID: %s\n',i,x.failure_id{i});
+            fprintf(2,'  Reason: %s\n',x.failure_reason{i});
+        end
+        error('V7c:SmokeFailed', ...
+            'V7c 自检失败：请将上方每个 Trial 的 ID、Reason 和报错堆栈发给我；不要运行冻结测试。');
+    end
     assert(all(all(isfinite(x.core_rmse(x.success,:)))),'Core RMSE must be finite');
     assert(all(all(isfinite(x.holdout_rmse(x.success,:)))),'holdout RMS must be finite');
     assert(all(x.chosen_alpha(x.success)>=0 & x.chosen_alpha(x.success)<=1));

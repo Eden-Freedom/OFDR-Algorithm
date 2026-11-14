@@ -65,7 +65,11 @@ function out=v7c_run_trials(cfg,repeats,dataset,group_idx)
             if t==1,out.example=trial.example;end
         catch ME
             out.failure_id{t}=ME.identifier;out.failure_reason{t}=ME.message;
-            if cfg.v7c.verbose, fprintf('[V7c %s] trial %d failed: %s\n',dataset,t,ME.message);end
+            if cfg.v7c.verbose
+                fprintf(2,'[V7c %s] trial %d failed | %s | %s\n', ...
+                    dataset,t,ME.identifier,ME.message);
+                fprintf(2,'%s\n',getReport(ME,'extended','hyperlinks','off'));
+            end
         end
         if cfg.v7c.verbose && (mod(t,10)==0||t==repeats)
             fprintf('[V7c %s] %d/%d complete, valid=%d\n',dataset,t,repeats,nnz(out.success));

@@ -2,7 +2,13 @@ function cfg=config_p1p2()
 %CONFIG_P1P2 新实验机制研究配置：与V6c共享物理核，不修改旧版本。
 % 本实验使用新的开发随机种子；冻结评估被程序层面禁止。
     here=fileparts(mfilename('fullpath'));
-    addpath(fullfile(fileparts(here),'..','v6c'));
+    % 本文件位于 matlab/mechanism_p1p2；v6c 是同级目录 matlab/v6c。
+    % 旧写法额外回退了一级，可能因先前 addpath 而侥幸运行，但会反复警告。
+    v6c_dir=fullfile(fileparts(here),'v6c');
+    if ~isfolder(v6c_dir)
+        error('P1P2:MissingV6c','未找到依赖目录: %s',v6c_dir);
+    end
+    addpath(v6c_dir);
     cfg=config_v6c();
     cfg.v6c.make_plots=false;
     cfg.v6c.save_results=false;

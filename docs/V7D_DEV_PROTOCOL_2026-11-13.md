@@ -52,11 +52,35 @@ Oracle真实q(t)、应变几何、Rayleigh系数真值、Core/Holdout评分均**
  
 ## 5. 继续研究的最低闸门（开发探索）
  
-- [ ] MATLAB静态/单元测试与2/2 smoke真正通过；所有错误输出完整ID、Reason、调用栈。
+- [x] 用户 MATLAB 实机确认候选约束、汇总单元测试与 2/2 完整 smoke 均 PASS（详见下面的实机记录）；若后续失败仍需完整异常 ID、原因及调用栈。
 - [ ] 24次新种子开发试次完整报告，无隐藏失败。
 - [ ] 与冻结V7c基线比较，至少展示Core/Holdout平均增益及CI、退化/最差退化与有效Gauge差。
 - [ ] 检查是否真的有alpha决策变化；若全部一致，则新门控在此场景没有增量。
 - [ ] 若达到探索性性能改善，再做归因、可观测信息审计与文献查新；**不直接宣称论文创新**。
 - [ ] 在正式决定独立冻结测试前，单独记录准确算法Git SHA、协议、种子、失败处理和模型限制，并审查测试锁是否应该解开。
  
-**当前状态**：研究代码初稿已提交，**未获得V7d任何MATLAB实机数据**，冻结测试锁定。
+**当前状态**：已经获得V7d 2/2 开发 Smoke 的 MATLAB 实机功能验证，但没有24次开发集、独立冻结测试或优越性证据；冻结测试继续锁定。
+
+ 
+## 6. 2026-11-13 用户 MATLAB 实机 Smoke 验证记录
+ 
+用户切换到研究分支后实机输出：
+ 
+~~~text
+[V7d feasibility unit] PASS: extra/total/monotone and frozen lock.
+[V7d summary unit] PASS: 7 methods, paired CI, failures, zero-success branch.
+[V7d dev] 2/2 completed; successful 2
+Successful 2/2 | failures 0 (0.00%)
+Core RMSE(ue):  0.103664 0.200999 0.350414 0.199678 0.199383 0.199678 0.199678
+Holdout RMS:   0.012092 0.261949 0.469363 0.258420 0.253864 0.258420 0.258420
+Mean validity: 0.9196 0.9139 0.9078 0.9139 0.9139 0.9139 0.9139
+Alpha V7c [0 .25 .5 .75 1]: 2 0 0 0 0
+Alpha V7d [0 .25 .5 .75 1]: 2 0 0 0 0
+Changed alpha decisions: 0/2 valid trials
+[V7d smoke] PASS: 2/2 paired 7-method development trials.
+FROZEN TEST LOCKED. Development results are NOT independent evidence.
+~~~
+ 
+评估：两 trial 均由 V7c 和 V7d 选择 alpha=0，故第4列、第6列和第7列的 Core/Holdout 完全相同，确认回退到 Affine 的路径合理，但**没有真实行使逐候选门控的增量机制**。对 V7c 的 Core/Holdout gain=0，Bootstrap区间[0,0]只表示这两个样本上的数值一致，不是统计等效结论。无失败、七方法有限是功能层面的证据；24次开发集仍未运行，且包含 smoke 的前2个开发种子（总样本n=24而不是26）。
+ 
+下一步：按既定协议运行24次开发集，检查 E 超过0.8MHz的频次、V7c/V7d的alpha决策改变次数、配对Core/Holdout gain及CI、最坏退化、有效Gauge与失败比例。即使仍然没有决策改变，也不应直接用旧V7c开发种子挑选有利条件。冻结100次继续锁定。

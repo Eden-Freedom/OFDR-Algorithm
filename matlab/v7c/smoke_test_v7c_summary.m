@@ -43,5 +43,5 @@ function smoke_test_v7c_summary()
     assert(empty.n_success==0 && isempty(empty.comparisons) && ...
            all(isnan(empty.mean_core)), ...
            'V7c:TestNoSuccess','0 成功试次的空结果处理错误。');
-    fprintf('[V7c summary unit] PASS: 3 comparison structs, paired gains, failure denominator, zero-success branch.\\n');
+    fprintf('[V7c summary unit] PASS: 3 comparison structs, paired gains, failure denominator, zero-success branch.\n');
 end

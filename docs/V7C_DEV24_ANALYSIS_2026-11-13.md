@@ -57,7 +57,7 @@
 已读取 v7c_cv_gate.m、v7c_fit_subset.m、v7c_run_trial.m、v6_reconstruct_trace.m 和 v7_static_phase_fit.m：
 
 1. 校正器没有显式把 truth.nu_offset_Hz 用于 alpha 选择或模型拟合，受应变 Core 和下游 Holdout 的相位用于评分而非门控。
-2. v6_reconstruct_trace.m 使用 truth.delta_nu_Hz 来确定空间距离网格；必须确认这是实际部署可独立获知的**标称带宽**还是仿真真实扫频带宽。前者可作为已知实验常数，后者会带来隐含 Oracle 依赖。当前不能声称完成零泄漏证明。
+2. v6_reconstruct_trace.m 使用 truth.delta_nu_Hz 来确定空间距离网格。已进一步检查 simulate_laser_sweep.m 与 config_v1.m：**在当前固定合成模型中**，该带宽完全由预先配置的波长端点 lambda_start_m / lambda_end_m 与光速计算得到，不是由随机扫频残差估计出来；因此本次不能直接将其认定为 Oracle 泄漏。不过函数接口仍直接接收 truth，未来若考虑未知真实频带端点或双扫描带宽变化，就必须改成由独立可观测的标称参数构建距离网格，并进行信息流审计。当前尚不能宣称在所有扩展实验条件下均实现零泄漏。
 3. v7c_cv_gate.m 和 v7c_fit_subset.m 的幅度阈值使用整个上游静止段（包括每折 CV 留出块）的幅度中位数。这不是直接使用验证相位标签，但意味着 CV 的样本有效性标准含有留出子段的信息；若论文要称严格的训练/验证隔离，则应审查这一转导式信息共享。
 4. 25mm 的空间保护带不能消除同一 Rayleigh 场与全局 NUFFT 响应带来的样本关联。不能把 spatial blocked CV 等同独立测试集。
 

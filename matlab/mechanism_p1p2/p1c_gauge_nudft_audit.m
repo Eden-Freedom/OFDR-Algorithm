@@ -95,6 +95,14 @@ function a=p1c_gauge_nudft_audit(cfg)
     a.oracle_core_NUDFT_RMSE_ue=sqrt(mean((strainD-trueStrain).^2));
     a.oracle_rmse_difference_ue=a.oracle_core_NUDFT_RMSE_ue- ...
                                 a.oracle_core_NUFFT_RMSE_ue;
+    % 两方法在完全相同真值和固定Core掩码上，RMSE满足反三角不等式：
+    % |RMSE(NUDFT)-RMSE(NUFFT)| <= RMS(strainDirect-strainNUFFT)。
+    % 这给出了本次试次中数值重构差异对RMSE改变量的直接上限。
+    a.core_rmse_difference_bound_ue=a.strain_difference_direct_minus_nufft_RMS_ue;
+    if abs(a.oracle_rmse_difference_ue) > ...
+            a.core_rmse_difference_bound_ue+1e-10
+        error('P1C:RMSEBound','固定掩码下RMSE反三角不等式未成立。');
+    end
     % 记录在原NUFFT已被判为有效的位置，直接NUDFT的两端是否降至幅度门限以下。
     endpoints=unique([ids;ids+lag]);
     a.direct_below_original_gate_site_count=nnz( ...
@@ -118,6 +126,8 @@ function a=p1c_gauge_nudft_audit(cfg)
     fprintf('Oracle Core RMSE NUFFT=%.6g ue | direct NUDFT=%.6g ue | delta=%+.6g ue\n', ...
         a.oracle_core_NUFFT_RMSE_ue,a.oracle_core_NUDFT_RMSE_ue, ...
         a.oracle_rmse_difference_ue);
+    fprintf('RMSE difference absolute bound=%.6g ue (fixed-gauge triangle inequality)\n', ...
+        a.core_rmse_difference_bound_ue);
     fprintf('Direct below original amplitude gate: %d/%d required endpoint sites\n', ...
         a.direct_below_original_gate_site_count,a.n_original_eligible_endpoint_sites);
     fprintf('Only known-development-seed numerical check; no calibration parameters were fitted.\n');

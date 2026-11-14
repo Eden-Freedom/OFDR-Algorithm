@@ -74,7 +74,7 @@
     disp(T(T.trial == d.worst_vs_sapc_trial,:));
     writetable(T, fullfile('matlab','v7c','output','V7c_DEV24_DIAGNOSTICS.csv'));
 
-也可使用现有内存中的 results 调用 [T,d]=v7c_diagnose_development(results)；不要读取冻结测试字段。重点查看最坏退化 trial 的 alpha、gate_reason、cv_gain_fraction、data_hessian_rcond、Core/Holdout 增益和有效率；参考留一敏感性输出，但完整 trial 结果必须保留。
+也可使用现有内存中的 results 调用 [T,d]=v7c_diagnose_development(results)；不要读取冻结测试字段。重点查看最坏退化 trial 的 alpha、gate_reason、cv_gain_fraction、data_hessian_rcond、Core/Holdout 增益和有效率；参考留一敏感性输出，但完整 trial 结果必须保留。脚本还给出两种**只用于开发集诊断的反事实分类**：n_accept_regression（接受 alpha>0 却比 affine 的真实 Core 更差），以及 n_reject_full_better（回退 alpha=0 但 Full SAPC 真实 Core 本可更好）。这些分类读取真实应变评分，**只能用于事后机制分析，禁止回流到任何 CV/门控拟合中**。
 
 ## 六、阶段性决策
 

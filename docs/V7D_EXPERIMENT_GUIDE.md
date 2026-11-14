@@ -67,7 +67,7 @@ if s.n_success>0
     disp(find(changed));
     disp('Full额外峰值E超0.8MHz的有效trial索引:');
     disp(find(r.success & r.full_extra_peak_MHz>cfg.v7d.max_extra_correction_MHz));
-    fprintf('共同有效Gauge比例=%.4f，成功=%d/%d，失败=%d\\n', ...
+    fprintf('共同有效Gauge比例=%.4f，成功=%d/%d，失败=%d\n', ...
         s.mean_common_valid,s.n_success,s.total,s.failures);
 end
 ~~~

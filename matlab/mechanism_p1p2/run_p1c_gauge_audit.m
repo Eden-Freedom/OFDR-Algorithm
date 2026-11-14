@@ -14,4 +14,5 @@ function a=run_p1c_gauge_audit()
                          'direct_minus_nufft_strain_ue'});
     writetable(T,fullfile(folder,'P1C_GAUGE_NUDFT_DEVELOPMENT.csv'));
     fprintf('[P1c] saved MAT/CSV with full fixed-mask Gauge diagnostics.\n');
+    p1c_plot_gauge_nudft(a);
 end

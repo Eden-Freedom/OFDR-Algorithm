@@ -38,7 +38,7 @@ smoke_test_v7d
  
 验收预期：7方法配对2/2成功；Core/Holdout有限；共同Core/Holdout Gauge不少于15；新方法最终坐标总修正≤5 MHz、额外修正≤0.8 MHz。若失败，保留ID/Reason及堆栈，**不能为了通过测试直接改门限**。2个试次的改善/CI不能算科研证据。
  
-### 第三阶段：24次开发集（仅在 smoke PASS 后运行）
+### 第三阶段：24次开发集（用户实机 smoke 已 PASS，可执行）
  
 ~~~matlab
 cfg=config_v7d();
@@ -57,6 +57,19 @@ disp(s.comparisons(4)); % V7d vs 原V7c（主对照）
 disp(results.development.reason_v7d);
 disp(results.development.failure_id);
 disp(results.development.failure_reason);
+% 注意只有有效trial用于均值与bootstrap；失败trial仍计入分母
+r=results.development;
+if s.n_success>0
+    disp('V7d vs V7c paired Core/Holdout:');
+    disp(s.comparisons(4));
+    disp('改变alpha决策的有效trial索引:');
+    changed=r.success & abs(r.alpha_v7c-r.alpha_v7d)>1e-12;
+    disp(find(changed));
+    disp('Full额外峰值E超0.8MHz的有效trial索引:');
+    disp(find(r.success & r.full_extra_peak_MHz>cfg.v7d.max_extra_correction_MHz));
+    fprintf('共同有效Gauge比例=%.4f，成功=%d/%d，失败=%d\\n', ...
+        s.mean_common_valid,s.n_success,s.total,s.failures);
+end
 ~~~
  
 结果目录 `matlab/v7d/output/`，保存 `V7d_DEVELOPMENT_results.mat` 与 `V7d_DEVELOPMENT_trials.csv`；图窗由 `v7d_plot_results` 生成，**默认不会自动保存图像文件**，可以从MATLAB中手动保存PNG/FIG并关联Git commit SHA。重复运行同名开发模式会覆盖前次MAT/CSV，请归档原始证据。
@@ -82,3 +95,10 @@ disp(results.development.failure_reason);
 ## 三、如果失败
  
 若出现 `V7d:FrozenLocked`，检查是否误将冻结开关打开；这属于预期安全保护。其他错误保留命令行堆栈，不直接运行24次或100次。没有用户MATLAB实机结果时，任何V7d性能数值均**不能作为实测已证实**。
+
+ 
+### MATLAB Smoke 实机通过记录（2026-11-13）
+ 
+用户已经提供真实日志：候选约束单元测试PASS、统计单元测试PASS、完整七方法2/2 PASS，所有试次成功，未触发冻结安全锁。**但两个试次V7c和V7d均alpha=0，决策改变0/2，尚未测试到新方法的增量效果。**
+ 
+因此下一步是**24次新种子开发集（包含两次smoke）**，而不是直接运行100次冻结。检查E超限频次与改变alpha决策的试次数量；若两方法决策全部相同，意味着当前物理条件下未观察到新增门控的性能价值（并非证明方法不可能改善）。如果有不为零的差异，统计全24成功试次的Core/Holdout配对结果、有效率和最坏退化，失败试次始终计入24的分母。

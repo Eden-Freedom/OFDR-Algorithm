@@ -57,7 +57,8 @@ function out=v7c_run_trial(cfg,truth,trial_index)
     out.core_rmse=nan(1,6);out.holdout_rmse=nan(1,6);
     out.valid_fraction=nan(1,6);out.core_bias=nan(1,6);
     for k=1:6
-        m=out.metrics{k];e=m.strain_error_microeps(core);
+        m=out.metrics{k}; % cell 使用 {k} 取出本次方法的评分结构体，禁止误写成 {k]
+        e=m.strain_error_microeps(core);
         out.core_rmse(k)=sqrt(mean(e.^2));out.core_bias(k)=mean(e);
         s=m.measured_gauge_strain_microeps(holdout);
         out.holdout_rmse(k)=sqrt(mean(s.^2));

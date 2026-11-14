@@ -58,10 +58,10 @@ function s=p2b_summarize(r,cfg)
             if nnz(good)>=2
                 [lo,hi]=v6b_bootstrap_ci(residual,cfg.p2b.bootstrap_reps, ...
                     cfg.p2b.bootstrap_seed+1000*j+19*v);
-                s.prediction_error_CI95(j,v,:)=[lo,hi];
+                s.prediction_error_CI95(j,v,:)=reshape([lo,hi],1,1,2);
                 [lo,hi]=v6b_bootstrap_ci(ca,cfg.p2b.bootstrap_reps, ...
                     cfg.p2b.bootstrap_seed+2000*j+23*v);
-                s.actual_C_CI95(j,v,:)=[lo,hi];
+                s.actual_C_CI95(j,v,:)=reshape([lo,hi],1,1,2);
             end
         end
     end

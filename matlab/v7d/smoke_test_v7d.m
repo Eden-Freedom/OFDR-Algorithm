@@ -1,6 +1,7 @@
 function smoke_test_v7d()
 %SMOKE_TEST_V7D 仅两个新开发种子；证明程序流程，不做科研CI解释。
     smoke_test_v7d_feasibility();
+    smoke_test_v7d_summary();
     cfg=config_v7d();
     cfg.v7d.development_repeats=2;
     cfg.v7d.make_plots=false;
@@ -31,6 +32,23 @@ function smoke_test_v7d()
            all(r.final_total_peak_MHz(r.success)<= ...
                cfg.v7d.max_total_correction_MHz+1e-10), ...
            'V7d:SmokeCoordinate','新方法最终坐标约束失败。');
+    % alpha=0/1时对应Affine/Full SAPC；验证与原数值核完全等价。
+    for i=find(r.success).'
+        if abs(r.alpha_v7c(i))<1e-12
+            assert(abs(r.core_rmse(i,6)-r.core_rmse(i,4))<1e-8, ...
+                'V7d:SmokeV7cAffine','旧V7c回退不等于Affine。');
+        elseif abs(r.alpha_v7c(i)-1)<1e-12
+            assert(abs(r.core_rmse(i,6)-r.core_rmse(i,5))<1e-8, ...
+                'V7d:SmokeV7cFull','旧V7c alpha=1不等于Full SAPC。');
+        end
+        if abs(r.alpha_v7d(i))<1e-12
+            assert(abs(r.core_rmse(i,7)-r.core_rmse(i,4))<1e-8, ...
+                'V7d:SmokeNewAffine','新V7d回退不等于Affine。');
+        elseif abs(r.alpha_v7d(i)-1)<1e-12
+            assert(abs(r.core_rmse(i,7)-r.core_rmse(i,5))<1e-8, ...
+                'V7d:SmokeNewFull','新V7d alpha=1不等于Full SAPC。');
+        end
+    end
     fprintf('[V7d smoke] PASS: 2/2 paired 7-method development trials.\n');
     fprintf('NOTE: 2/2 smoke does not validate V7d superiority.\n');
 end

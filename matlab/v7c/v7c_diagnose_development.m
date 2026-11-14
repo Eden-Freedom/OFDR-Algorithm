@@ -58,6 +58,14 @@ function [T,d]=v7c_diagnose_development(results)
     d.n_affine_fallback=nnz(good & alpha==0);
     d.n_full_sapc=nnz(good & alpha==1);
     d.n_partial=nnz(good & alpha>0 & alpha<1);
+    % 仅做事后 Oracle 评分诊断，绝不能反过来用于 alpha 的选择。
+    % 接受失误：alpha>0 但 Core 比 affine 更差。
+    d.n_accept_regression=nnz(good & alpha>0 & ga<0);
+    d.n_accept_improvement=nnz(good & alpha>0 & ga>0);
+    % 拒绝代价：alpha=0，但 Full SAPC 本可获得更低的 Core RMSE。
+    % 这只是对 full 的反事实比较，不保证 full 在 Holdout 也更好。
+    d.n_reject_full_better=nnz(good & alpha==0 & ...
+        r.core_rmse(:,5)<r.core_rmse(:,4));
     d.loo_mean_core_gain_vs_sapc=nan(n,1);
     d.loo_mean_core_gain_vs_affine=nan(n,1);
     d.worst_vs_sapc_trial=NaN;
@@ -72,6 +80,8 @@ function [T,d]=v7c_diagnose_development(results)
         fprintf('所有 trial 均失败，跳过收益统计。\n');
         return;
     end
+    fprintf('被接受的非仿射试次：Core 改善=%d，反而退化=%d；拒绝 full 但 full Core 较优=%d\n', ...
+        d.n_accept_improvement,d.n_accept_regression,d.n_reject_full_better);
     fprintf('平均 Core gain：vs affine = %+.6f με，vs full SAPC = %+.6f με\n', ...
         mean(ga(good)),mean(gf(good)));
     fprintf('平均 Holdout gain：vs affine = %+.6f με，vs full SAPC = %+.6f με\n', ...

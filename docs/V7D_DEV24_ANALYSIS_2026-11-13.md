@@ -71,3 +71,23 @@
 - 原三幅图由 `v7d_plot_results` 提供；截图与原日志由用户提供，仓库目前记录数值而未自动上传图片。
 
 本文件只记录用户MATLAB实际输出；GitHub端没有运行MATLAB，也没有修改V7d算法或本批种子。
+
+## 七、只读MATLAB覆盖率审计（新增工具，尚未实机验证）
+
+新增 `matlab/v7d/v7d_audit_coverage_dev.m` 和对应合成数据单元测试 `smoke_test_v7d_coverage_audit.m`。它们不会重跑物理随机试次，也不会使用冻结种子。只从已保存MAT中检查 `E` 实际最小、最大值和经验95分位、alpha变更数、有效候选数量、两折CV是否完成、失败率以及共同Core/Holdout Gauge数量。
+
+在**已创建的 V7d-PF 分支**和MATLAB仓库根目录执行：
+
+```matlab
+!git pull --ff-only
+addpath('matlab/v7d');
+clear v7d_audit_coverage_dev smoke_test_v7d_coverage_audit
+rehash
+smoke_test_v7d_coverage_audit
+[T,d]=v7d_audit_coverage_dev();
+disp(d);
+disp(T(:,{'trial','E_MHz','E_margin_MHz','alpha_v7c','alpha_v7d','changed','full_nonaffine_count','fold_nonaffine_count_if_CV_executed','common_valid_fraction'}));
+writetable(T,fullfile('matlab','v7d','output','V7d_DEV24_COVERAGE_AUDIT.csv'));
+```
+
+注意：工具尚未在用户MATLAB实机运行，不能把 `smoke_test_v7d_coverage_audit` 已通过作为事实；若报错应先提交原始ID、Reason、Stack。若输出 `0/24 E超限、0/24 alpha变化`，只说明本批物理条件没有观察到目标事件，不可认为已经充分验证V7d规则。对 `fold_nonaffine_count_if_CV_executed` 的NaN要区分“CV没有执行”与“候选不可行”，不能将NaN当成0个可行候选。

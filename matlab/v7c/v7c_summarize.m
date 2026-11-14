@@ -29,7 +29,14 @@ function s=v7c_summarize(r,B,seed)
         co.mean_regression_on_losses=NaN;
         if any(core<0),co.mean_regression_on_losses=mean(-core(core<0));end
         co.core_gain_trial=nan(r.n_trials,1);co.core_gain_trial(good)=core;
-        s.comparisons(k)=co;
+        % MATLAB 不允许把带字段的 co 通过下标赋给无字段的 struct([])。
+        % 第一次先建立完整字段结构，后续各次才按相同字段追加。
+        % 只修复结果容器初始化，不改变配对收益或 bootstrap 统计。
+        if k==1
+            s.comparisons=co;
+        else
+            s.comparisons(k)=co;
+        end
     end
     s.selection_alpha_counts=zeros(1,5);
     choices=[0 .25 .5 .75 1];

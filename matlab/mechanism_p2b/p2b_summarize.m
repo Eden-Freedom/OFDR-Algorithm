@@ -16,6 +16,12 @@ function s=p2b_summarize(r,cfg)
     s.mean_signed_error=nan(K,A);
     s.mean_abs_error=nan(K,A);
     s.worst_abs_error=nan(K,A);
+    s.mean_null_abs_error=nan(K,A);
+    s.mean_abs_gain_vs_zero=nan(K,A);
+    s.gain_CI95=nan(K,A,2);
+    s.n_prediction_better=zeros(K,A);
+    s.n_prediction_worse=zeros(K,A);
+    s.worst_abs_loss_regression=nan(K,A);
     s.prediction_error_CI95=nan(K,A,2);
     s.actual_C_CI95=nan(K,A,2);
     s.sign_agreement=nan(K,A);
@@ -48,6 +54,14 @@ function s=p2b_summarize(r,cfg)
             s.mean_signed_error(j,v)=mean(residual);
             s.mean_abs_error(j,v)=mean(abs(residual));
             s.worst_abs_error(j,v)=max(abs(residual));
+            % 固定零效应预测器 Cpred=0 是最低限度的可证伪基线；
+            % Gain = |Cactual| - |Cactual-Cpred|，正表示方向导数模型优于零预测。
+            abs_gain=abs(ca)-abs(residual);
+            s.mean_null_abs_error(j,v)=mean(abs(ca));
+            s.mean_abs_gain_vs_zero(j,v)=mean(abs_gain);
+            s.n_prediction_better(j,v)=nnz(abs_gain>1e-12);
+            s.n_prediction_worse(j,v)=nnz(abs_gain< -1e-12);
+            s.worst_abs_loss_regression(j,v)=max([0;-abs_gain]);
             % 对实际C=0的trial，不使用符号预测准确率而单独报告。
             use=abs(ca)>1e-12;
             s.n_nonzero_actual(j,v)=nnz(use);
@@ -62,6 +76,9 @@ function s=p2b_summarize(r,cfg)
                 [lo,hi]=v6b_bootstrap_ci(ca,cfg.p2b.bootstrap_reps, ...
                     cfg.p2b.bootstrap_seed+2000*j+23*v);
                 s.actual_C_CI95(j,v,:)=reshape([lo,hi],1,1,2);
+                [lo,hi]=v6b_bootstrap_ci(abs_gain,cfg.p2b.bootstrap_reps, ...
+                    cfg.p2b.bootstrap_seed+3000*j+29*v);
+                s.gain_CI95(j,v,:)=reshape([lo,hi],1,1,2);
             end
         end
     end

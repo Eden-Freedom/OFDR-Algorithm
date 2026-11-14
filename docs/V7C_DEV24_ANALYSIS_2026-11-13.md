@@ -69,6 +69,7 @@
 
     !git pull --ff-only
     addpath('matlab/v7c');
+    smoke_test_v7c_diagnose            % 先运行纯合成数据单元测试
     [T,d] = v7c_diagnose_development();  % 自动载入 V7c_development_results.mat
     disp(T(T.trial == d.worst_vs_sapc_trial,:));
     writetable(T, fullfile('matlab','v7c','output','V7c_DEV24_DIAGNOSTICS.csv'));
@@ -78,3 +79,5 @@
 ## 六、阶段性决策
 
 本开发集达成了功能验证，但未给出优于强基线的性能证据；暂不执行 V7c 的 100 次冻结测试。先完成离线逐试次诊断和物理输入审计，再决定是否（A）按原固定协议独立验证可能为阴性结果的 V7c，或者（B）归档 V7c 并提出带有独立新开发与冻结种子的 V7d。不得在已经查看的测试集反复挑选门控参数。
+
+补充：新诊断脚本和配套合成数据单元测试仅做软件自检与事后描述，**尚未在用户 MATLAB 实机运行**；测试应先看到 [V7c development diagnostic unit] PASS，再分析开发数据。

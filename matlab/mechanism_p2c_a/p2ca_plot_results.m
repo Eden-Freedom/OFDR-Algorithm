@@ -14,6 +14,9 @@ function p2ca_plot_results(r)
         semilogy((1:numel(s)).',s,'-o','MarkerSize',3,'LineWidth',1);
     end
     hold off;grid on;
+    % 在某些MATLAB版本中，先执行hold on会保留坐标轴默认的线性YScale；
+    % 显式指定对数纵轴，防止semilogy绘图看起来仍是线性刻度。
+    set(gca,'YScale','log');
     xlabel('Ordered singular-value index (not spatial frequency)');
     ylabel('Singular value (dimensionless x=nu*dt)');
     legend(names,'Location','best');
